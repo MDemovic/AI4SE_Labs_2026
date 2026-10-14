@@ -1,56 +1,59 @@
 Task 4 – Detailed comparison and interpretation
 
-I compared the revised ICIO, ReAct, and SCOPE prompts using the Task 2 predictions and the Task 3 metric. 
-Each prompt was run once in a fresh session using GPT-6.1 SOL with Medium reasoning, the same input files, and the same illustrative SQL example.
-The comparison includes the original exact-row accuracy, name-only exact matching, macro name F1, and observed generation time. 
+I compared the corrected ICIO, ReAct, and SCOPE prompts using the new Task 2 predictions and the recalculated Task 3 metric. All three prompts now request HOUSE_NUMBER and NAME. 
+The first comparison used one fresh-session run per prompt with GPT-6.1 SOL and Medium reasoning, the same input files, and the same illustrative SQL example. I then ran each corrected prompt once with GPT luna, High reasoning, and Chat / Instant mode. The model and setting names are recorded as shown to me; both the model and settings changed between configurations.
+The comparison includes the original evaluator’s exact-row accuracy, name-only exact matching, macro name F1, and observed generation time. 
 The analysis and figures were prepared with help from a LLM.
 
+GPT-6.1 SOL / Medium results:
 Framework   Original accuracy   Name exact match   Macro name F1   Nonempty name F1   Time
-ICIO        27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             122 s
-ReAct       27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             147 s
-SCOPE       27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             187 s
+ICIO        94.84% (147/155)    94.84% (147/155)   98.51%          97.94%             74 s
+ReAct       94.84% (147/155)    94.84% (147/155)   98.51%          97.94%             86 s
+SCOPE       94.84% (147/155)    94.84% (147/155)   98.51%          97.94%             101 s
 
 Nonempty name F1 is the average over the 112 questions with nonempty expected results. 
-Macro name precision was 98.32% and macro name recall was 98.71% for every framework. There were no SQL execution errors.
+Macro name precision was 98.36% and macro name recall was 98.71% for every framework. There were no SQL execution errors.
 
 Figures in this folder:
 - Task_4_metric_comparison.png compares all four quality scores.
 - Task_4_outcomes_and_time.png shows the shared outcome distribution and observed times.
-- Task_4_name_mismatches.png shows F1 for the 12 questions without an exact name match.
+- Task_4_name_mismatches.png shows F1 for the 8 questions without an exact name match in the Medium runs.
+- Task_4_additional_comparison.png compares accuracy, F1, and time across both configurations.
+- Task_4_additional_mismatches.png shows the additional GPT luna runs question by question.
 
 
-All frameworks returned identical result multisets on all 155 questions. Their SQL text differed on 154 questions for ICIO versus ReAct, 145 for ICIO versus SCOPE, and 155 for ReAct versus SCOPE. 
-The original accuracy was low mainly because the reference ID/name pairs are inconsistent with the supplied database. 
-Of 13,235 expected row occurrences, 13,232 did not have an ID/name pairing matching the database. These counts include repeated occurrences, not just unique restaurants.
+Within the GPT-6.1 SOL Medium comparison, all frameworks returned identical result multisets on all 155 questions. Their SQL text differed on 129 questions for ICIO versus ReAct, 155 for ICIO versus SCOPE, and 155 for ReAct versus SCOPE. 
+The initial prompts requested restaurant ID and NAME, while the expected results contain HOUSE_NUMBER and NAME. The models followed our incorrect instruction. My earlier explanation that the reference IDs were inconsistent was wrong.
+After correcting the output columns and requiring the LOCATION join, I reran all three prompts. All 13,235 expected row occurrences match house-number/name pairs in the supplied database. The evaluator was not changed.
 
-All 43 original exact matches were questions with empty expected results. No nonempty expected result passed the original comparison, which makes the
-original metric weak for comparing these prompts here, even though the evaluator correctly applies its stated rule. 
-Changing the prompt cannot recover the reference ID mapping from the supplied schema and database alone.
+Comparison of the initial and corrected runs, applying to all three frameworks:
+Run                 Original accuracy    Name exact match    Macro name F1
+Initial prompts     27.74% (43/155)       92.26% (143/155)    98.49%
+Corrected prompts   94.84% (147/155)      94.84% (147/155)    98.51%
 
-Name-only exact matching is much higher, but still fails on 12 questions. F1 distinguishes partial overlap from complete failure: 143 questions scored 1, 10 scored between 0 and 1, and two scored 0. 
+The original accuracy increased by 67.10 percentage points. Name-based F1 changed only slightly because it ignores the numerical output column. The required join also changed some returned rows, so this was not simply renaming a column.
+This improvement demonstrates the importance of specifying the correct output, rather than an advantage of one framework over another. Part of the experimentation was spent finding and fixing this shared mistake; I then added the GPT luna / High / Instant runs. I did not perform further prompt tuning or repeated runs within each configuration.
+
+Name-only exact matching now equals the original accuracy, with 8 questions failing both. F1 distinguishes partial overlap from complete failure: 147 questions scored 1, 6 scored between 0 and 1, and two scored 0. 
 The high F1 therefore does not mean every question was answered correctly.
 
-Looking only at nonempty references lowers F1 from 98.49% to 97.91%. This shows that the overall score is helped by empty matches, but substantial name overlap remains without them. 
+Looking only at nonempty references lowers F1 from 98.51% to 97.94%. This shows that the overall score is helped by empty matches, but substantial name overlap remains without them. 
 An empty match also cannot verify which columns the query selected.
 
 
 Question   Expected rows   Predicted rows   Name F1
 23         62              63               99.20%
-26         154             161              97.78%
+26         154             157              99.04%
 28         62              63               99.20%
 30         37              41               94.87%
 35         18              19               97.30%
 66         2696            0                0.00%
-87         9171            9221             99.73%
-93         63              64               99.21%
-102        159             161              99.38%
-119        201             202              99.75%
 121        2               3                80.00%
 131        3               0                0.00%
 
 
-The same table applies to all three prompts. Full questions, missing and extra name counts, and representative ICIO SQL are stored in name_mismatch_examples.csv.
-For all 10 partial matches, every expected name occurrence was returned, but additional occurrences were present. 
+The same table applies to all three GPT-6.1 SOL Medium runs. Full questions, missing and extra name counts, and SQL for each framework are stored in name_mismatch_examples.csv.
+For all 6 partial matches, every expected name occurrence was returned, but additional occurrences were present. 
 Some mismatches involve how the database represents restaurants rather than an obviously incorrect condition.
 
 For questions 23 and 28, the extra occurrence is "genghis khan kitehen". The database stores two rows with that name, both in Alameda with rating 2.3, but under different cuisines and IDs. 
@@ -77,39 +80,73 @@ Pointers that would help:
 - Clarify whether queries should return database rows or unique restaurants.
 - Add a distinct-name score alongside multiset F1 to separate duplicate-count differences from missing or extra names.
 
+--- Additional runs: GPT luna / High / Instant ---
+
+The same corrected prompts were used for these runs. Their CSV files and metadata are stored in ICIO_rerun, ReAct_rerun, and SCOPE_rerun. The exact fresh-session status of these additional runs was not recorded, so this is a further limitation of the comparison.
+
+Framework    Accuracy       Correct    Name F1    Nonempty name F1    Time
+ICIO         89.03%         138/155    93.42%     97.15%              61 s
+ReAct        94.84%         147/155    98.51%     97.94%              52 s
+SCOPE        89.03%         138/155    92.84%     90.10%              109 s
+
+All 155 queries in each additional file executed successfully and returned HOUSE_NUMBER and NAME. ReAct returned exactly the same result multisets as its Medium run. ICIO differed from its Medium run on 10 questions, and SCOPE differed on 9.
+
+Unlike the Medium comparison, the additional prompt outputs differed. ICIO and ReAct differed on 10 questions, ICIO and SCOPE on 19, and ReAct and SCOPE on 9. ICIO and SCOPE had equal accuracy but different F1 scores, so equal accuracy did not imply equal results.
+
+Some failures were clear interpretation errors. In question 1, the additional ICIO query filtered the city Winters but omitted the requested tea cuisine, returning an unrelated restaurant instead of the expected empty result. In question 73 it omitted the street and city criteria and returned 9,538 rows. In question 135 it incorrectly treated parts of the distracting story as restaurant-name and city filters.
+
+The additional SCOPE run also missed some filters. In question 116 it omitted the breakfast cuisine condition and returned 3,381 rows instead of 30. In question 108 it treated part of the unrelated story as the cuisine value. These cases show that executable SQL can still misinterpret the question.
+
+ReAct was the fastest observed additional run at 52 seconds and retained the best accuracy and F1. ICIO was faster than its Medium run but less accurate. SCOPE was both slower than its Medium run and less accurate. A different model configuration therefore did not produce a consistent speed or quality change across prompts.
+
 --- Comparison ---
 
 I compared the prompts question by question because they answered the same questions.
 The analysis used a paired permutation test, which checks whether swapping prompt labels within each question changes the average score difference. 
-Here, every question had the same score across prompts, so swapping labels changed nothing. The p-value was therefore 1 for every comparison.
+For the Medium runs, every question had the same score across prompts, so swapping labels changed nothing. The p-value was therefore 1 for every comparison.
 
 Comparison       Original accuracy p   Name exact-match p   Name F1 p
 ICIO vs ReAct    1.000                 1.000                1.000
 ICIO vs SCOPE    1.000                 1.000                1.000
 ReAct vs SCOPE   1.000                 1.000                1.000
 
-Using a significance threshold of 0.05, there was no statistically significant quality difference. 
+Using a significance threshold of 0.05, there was no statistically significant quality difference between the Medium prompt runs. 
 This applies to these saved outputs; it does not prove that the prompts would perform equally on other questions or repeated runs.
-Generation times were different: ICIO took 122 seconds, ReAct 147, and SCOPE 187. 
+Generation times were different: ICIO took 74 seconds, ReAct 86, and SCOPE 101. 
 However, one run per prompt is not enough to test whether these speed differences are consistent. The ±1 second describes stopwatch uncertainty, not variation between runs.
 
 
-Prompts: All three used the same schema, example, output format, and similar SQL rules. These shared instructions may explain the identical results.
+I also applied the same paired tests to the additional runs and to each framework across configurations. There are nine comparisons per metric: three within Medium, three within GPT luna, and three matched-framework comparisons across configurations. I used Holm correction across these nine comparisons separately for each metric. Full results are in additional_paired_comparisons.csv.
+
+Comparison                         Raw F1 p    Holm-adjusted F1 p
+Luna: ICIO vs ReAct                 0.00586     0.04102
+Luna: ICIO vs SCOPE                 0.85861     1.00000
+Luna: ReAct vs SCOPE                0.00391     0.03516
+Medium vs Luna: ICIO                0.00586     0.04102
+Medium vs Luna: ReAct               1.00000     1.00000
+Medium vs Luna: SCOPE               0.00391     0.03516
+
+At 0.05, the saved GPT luna ReAct results have significantly higher F1 than its ICIO and SCOPE results under this test. Medium also has significantly higher F1 than GPT luna for ICIO and SCOPE. The exact-accuracy tests support the same four differences, with adjusted p=0.03516. ReAct across configurations and ICIO versus SCOPE within GPT luna do not show significant differences.
+The ICIO-versus-SCOPE F1 p-value uses 10,000 seeded sign-flip samples; the other listed F1 p-values are exact. Repeated or related question patterns and a single run per combination limit generalization. These tests compare saved outputs, not long-run model performance or a causal effect of reasoning settings.
+
+Prompts: All three used the same schema, example, output format, and similar SQL rules. These shared instructions may explain the identical Medium results. The additional GPT luna runs show that the prompt outputs can still differ under another configuration.
 Since some rules also differed, this was not a comparison of framework structure alone.
 
-Model: The same model and reasoning setting were used throughout. It may handle these questions similarly with all three prompts, but more runs would be needed to check that.
-Coding agent and tools: Python execution can catch SQL errors, but it cannot fix inconsistent reference IDs or decide how every ambiguous question should be interpreted. 
+Model: The model and settings were fixed within each configuration but changed together between configurations. The results cannot isolate the effect of Instant mode, reasoning effort, or model choice. More runs would be needed to check whether the observed differences are consistent.
+Coding agent and tools: Python execution can catch SQL errors, but a query can execute successfully while returning the wrong columns or interpreting an ambiguous question differently. The initial ID/HOUSE_NUMBER mistake is an example of this. 
 ChatGPT does not expose its full internal reasoning (only partial reasoning summaries), so I could verify the generated SQL but not whether it followed every reasoning step requested by the framework. 
 
 Timing: Extra checks, tool calls, and service delays may explain the longer runs. These are possible causes, not things measured in this experiment.
 
 --- Interpretation ---
 
-ICIO was fastest in this comparison and achieved the same measured quality as ReAct and SCOPE. The longer prompts did not improve the returned results in these runs.
-A stronger experiment would clarify the reference data, use consistent rules and tool access, and repeat each prompt several times.
+ICIO was fastest in the Medium comparison and achieved the same measured quality as ReAct and SCOPE. In the additional GPT luna comparison, ReAct was fastest and achieved higher accuracy and F1 than the other prompts. These experiments do not identify one framework as universally best.
+A stronger experiment would clarify the remaining ambiguous questions and duplicate-handling rules, use consistent tool access, and repeat each prompt several times.
 
 --- Reproducibilty ---
 Requires Python with matplotlib and numpy. Run the following command from the repository root.
 
 python Week_03_Prompting/Assignments/Task_4/analyze_results.py
+
+This recalculates Task 3 and both Task 4 comparisons, including metadata-based timing charts, per-question results, and paired statistics. The helper analyze_additional_runs.py evaluates all six corrected runs.
 -- https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html

@@ -6,6 +6,7 @@ https://frompting.com/frameworks
 
 I selected ICIO, ReAct, and SCOPE and adjusted them to the supplied restaurant database and required CSV output.
 All three prompts include the same question-to-SQL example, so none uses zero-shot prompting.
+The initial prompts incorrectly requested restaurant ID and NAME. I corrected all three prompts to return HOUSE_NUMBER and NAME using a join between RESTAURANT and LOCATION.
 
 1. ICIO
 

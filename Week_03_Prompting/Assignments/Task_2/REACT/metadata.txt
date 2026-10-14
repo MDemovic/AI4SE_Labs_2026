@@ -4,7 +4,7 @@ Model: GPT-6.1 SOL
 Reasoning setting: Medium
 Date: 2026-10-14
 Session: Fresh chat
-Generation time: 147 seconds (2 minutes 27 seconds)
+Generation time: 86 seconds (1 minute 26 seconds)
 Estimated timing uncertainty: ±1 second
 Timing method: Manual stopwatch
 Prediction file: restaurants_dataset_predictions.csv

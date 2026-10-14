@@ -1,6 +1,10 @@
 {
+  "reference_columns": [
+    "HOUSE_NUMBER",
+    "NAME"
+  ],
   "expected_row_occurrences": 13235,
-  "inconsistent_id_name_occurrences": 13232,
+  "matching_house_number_name_occurrences": 13235,
   "empty_expected_questions": 43,
-  "reference_note": "Counts are row occurrences, not unique restaurant identities."
+  "reference_note": "The first reference column is a house number, not a restaurant ID."
 }

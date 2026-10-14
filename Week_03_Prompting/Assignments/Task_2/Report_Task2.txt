@@ -1,7 +1,7 @@
 Task 2 – Comparing prompting frameworks
 The task was to convert natural-language restaurant questions into SQLite queries using the three prompts from Task 1: ICIO, ReAct, and SCOPE.
 
-I ran each framework’s prompt once in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning and the same schema, database, and question file.
+I ran each corrected framework’s prompt once in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning and the same schema, database, and question file.
 The predictions CSV and a metadata.txt files for each framework are stored in respective folders. The metadata identifies the framework, prompt file, model, settings, and generation time.
 The generation time was manually recorded from the moment of submitting the prompt untill the pred. file was able to be downloaded, with an estimated uncertainty of ±1 second. 
 This measures the complete generation process, including tool execution, rather than isolated model inference time.
@@ -9,22 +9,26 @@ This measures the complete generation process, including tool execution, rather 
 When looking at the results, of running the eval script on generated predictions:
 
 Framework    Accuracy    Correct predictions    Generation time
-ICIO         27.74%      43/155                 122 seconds
-ReAct        27.74%      43/155                 147 seconds
-SCOPE        27.74%      43/155                 187 seconds
+ICIO         94.84%      147/155                74 seconds
+ReAct        94.84%      147/155                86 seconds
+SCOPE        94.84%      147/155                101 seconds
 
 All three files contained 155 predictions, had the correct question,predicted_sql header, and preserved the original question text and order. Every SQL query executed successfully.
 The comparison of accuracy and generation time is shown in Task_2_visualization.png, stored in this folder. Timing error bars show the estimated manual measurement uncertainty of ±1 second.
 
-ICIO completed fastest in these runs. ReAct took 25 seconds longer than ICIO, while SCOPE took 65 seconds longer. 
+ICIO completed fastest in these runs. ReAct took 12 seconds longer than ICIO, while SCOPE took 27 seconds longer. 
 With only one run per framework, these differences do not establish that one framework is consistently faster. But all of them had the same accuracy. Why?
 
 Although the SQL text differed, all three prompts returned identical result multisets for every question. Task 4 examines this in more detail.
 
 All three prompts used the same model, schema, example, and many similar translation rules. These runs did not show a retrieval improvement from ReAct or SCOPE.
-The low score is largely explained by inconsistent restaurant IDs between the supplied database and expected results.
-For example, Portola Park has ID 2633 in the database, but the expected result uses ID 3, which belongs to helmand restaurant. The evaluator compares complete rows, including both ID and name. 
-A query can therefore return the expected restaurant name and still be marked incorrect because its ID differs.
+The initial runs achieved only 27.74%, which I first attributed to inconsistent restaurant IDs. This interpretation was wrong.
+The prompts explicitly requested restaurant ID and NAME, but the expected results contain HOUSE_NUMBER and NAME. The models followed our incorrect instruction.
+For example, Portola Park has restaurant ID 2633 and house number 3. The expected result uses 3 because it represents the house number, not the restaurant ID.
 
-The evaluator follows its comparison rule, but the reference results are inconsistent with the database used for execution. 
-This limits how well the original accuracy represents text-to-SQL quality. I kept the supplied evaluation unchanged and did not adjust queries to reproduce the expected IDs.
+I corrected all three prompts to join RESTAURANT and LOCATION and return HOUSE_NUMBER and NAME, then repeated the runs in fresh sessions.
+The supplied evaluator was kept unchanged. After correcting the output columns, all three prompts achieved 94.84%.
+
+Part of the experimentation was spent identifying and correcting the shared output-column mistake. I then ran an additional comparison using GPT luna with High reasoning and Chat / Instant mode. Those predictions and metadata are stored in Task_4/ICIO_rerun, Task_4/ReAct_rerun, and Task_4/SCOPE_rerun, and are analyzed separately in Task 4.
+There was one run per prompt in each configuration, so the results do not estimate run-to-run variability.
+The remaining eight mismatches in the GPT-6.1 SOL Medium runs are examined in Tasks 3 and 4.

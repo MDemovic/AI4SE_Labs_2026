@@ -1,0 +1,28 @@
+comparison_type,configuration_a,framework_a,configuration_b,framework_b,metric,mean_difference_a_minus_b,two_sided_p_value,nonzero_paired_differences,method,holm_adjusted_p_value,significant_after_holm_at_0_05
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,ReAct,original_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,ReAct,name_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,ReAct,name_f1,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,SCOPE,original_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,SCOPE,name_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,SCOPE,name_f1,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ReAct,GPT-6.1 SOL / Medium,SCOPE,original_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ReAct,GPT-6.1 SOL / Medium,SCOPE,name_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT-6.1 SOL / Medium,ReAct,GPT-6.1 SOL / Medium,SCOPE,name_f1,0.0,1.0,0,exact: all paired differences zero,1.0,0
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,ReAct,original_exact,-0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,ReAct,name_exact,-0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,ReAct,name_f1,-0.0509199639291873,0.005859375,10,exact sign-flip enumeration,0.041015625,1
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,SCOPE,original_exact,0.0,1.0,18,exact sign-flip enumeration,1.0,0
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,SCOPE,name_exact,0.0,1.0,18,exact sign-flip enumeration,1.0,0
+within configuration,GPT luna / High / Instant,ICIO,GPT luna / High / Instant,SCOPE,name_f1,0.005770736893076882,0.8586141385861414,19,10000 sign flips; seed 20261014,1.0,0
+within configuration,GPT luna / High / Instant,ReAct,GPT luna / High / Instant,SCOPE,original_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+within configuration,GPT luna / High / Instant,ReAct,GPT luna / High / Instant,SCOPE,name_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+within configuration,GPT luna / High / Instant,ReAct,GPT luna / High / Instant,SCOPE,name_f1,0.05669070082226417,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+across configurations,GPT-6.1 SOL / Medium,ICIO,GPT luna / High / Instant,ICIO,original_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+across configurations,GPT-6.1 SOL / Medium,ICIO,GPT luna / High / Instant,ICIO,name_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+across configurations,GPT-6.1 SOL / Medium,ICIO,GPT luna / High / Instant,ICIO,name_f1,0.0509199639291873,0.005859375,10,exact sign-flip enumeration,0.041015625,1
+across configurations,GPT-6.1 SOL / Medium,ReAct,GPT luna / High / Instant,ReAct,original_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+across configurations,GPT-6.1 SOL / Medium,ReAct,GPT luna / High / Instant,ReAct,name_exact,0.0,1.0,0,exact: all paired differences zero,1.0,0
+across configurations,GPT-6.1 SOL / Medium,ReAct,GPT luna / High / Instant,ReAct,name_f1,0.0,1.0,0,exact: all paired differences zero,1.0,0
+across configurations,GPT-6.1 SOL / Medium,SCOPE,GPT luna / High / Instant,SCOPE,original_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+across configurations,GPT-6.1 SOL / Medium,SCOPE,GPT luna / High / Instant,SCOPE,name_exact,0.05806451612903226,0.00390625,9,exact sign-flip enumeration,0.03515625,1
+across configurations,GPT-6.1 SOL / Medium,SCOPE,GPT luna / High / Instant,SCOPE,name_f1,0.05669070082226417,0.00390625,9,exact sign-flip enumeration,0.03515625,1

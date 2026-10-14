@@ -1,0 +1,10 @@
+configuration_a,framework_a,configuration_b,framework_b,different_sql_questions,different_result_questions
+GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,ReAct,129,0
+GPT-6.1 SOL / Medium,ICIO,GPT-6.1 SOL / Medium,SCOPE,155,0
+GPT-6.1 SOL / Medium,ReAct,GPT-6.1 SOL / Medium,SCOPE,155,0
+GPT luna / High / Instant,ICIO,GPT luna / High / Instant,ReAct,131,10
+GPT luna / High / Instant,ICIO,GPT luna / High / Instant,SCOPE,69,19
+GPT luna / High / Instant,ReAct,GPT luna / High / Instant,SCOPE,125,9
+GPT-6.1 SOL / Medium,ICIO,GPT luna / High / Instant,ICIO,140,10
+GPT-6.1 SOL / Medium,ReAct,GPT luna / High / Instant,ReAct,125,0
+GPT-6.1 SOL / Medium,SCOPE,GPT luna / High / Instant,SCOPE,155,9

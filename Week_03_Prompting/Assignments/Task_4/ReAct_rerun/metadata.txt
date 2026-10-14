@@ -1,0 +1,13 @@
+Framework: ReAct
+Prompt file: Week_03_Prompting/Assignments/Task_1/ReAct/Prompt.txt
+Model: GPT luna
+Reasoning setting: High
+Mode: Chat / Instant
+Model and settings source: User-reported labels
+Date: 2026-10-14
+Session: Fresh-session status not recorded for this additional run
+Generation time: 52 seconds (52 seconds)
+Estimated timing uncertainty: ±1 second
+Timing method: Manual stopwatch
+Prediction file: restaurants_dataset_predictions.csv
+Experiment: Additional configuration comparison; separate from GPT-6.1 SOL Medium runs

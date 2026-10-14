@@ -113,26 +113,32 @@ def main():
     try:
         for name in NAMES:
             outputs[name] = [connection.execute(r['predicted_sql']).fetchall() for r in predictions[name]]
-        for i, (label, predicted, scores) in enumerate(zip(labels, outputs['ICIO'], by_framework['ICIO']), 1):
-            expected = json.loads(label['result'])
-            a, b = Counter(r[1] for r in expected), Counter(r[1] for r in predicted)
-            if a != b:
-                errors.append({
-                    'question_index': i, 'question': label['question'],
-                    'expected_count': len(expected), 'predicted_count': len(predicted),
-                    'name_f1': scores['name_f1'],
-                    'missing_name_counts_json': json.dumps(dict(a - b), ensure_ascii=False),
-                    'extra_name_counts_json': json.dumps(dict(b - a), ensure_ascii=False),
-                    'distinct_name_sets_equal': int(set(a) == set(b)),
-                    'ICIO_SQL': predictions['ICIO'][i-1]['predicted_sql'],
-                })
-        db_names = dict(connection.execute('SELECT ID, NAME FROM RESTAURANT'))
-        expected_rows = [row for label in labels for row in json.loads(label['result'])]
+        for name in NAMES:
+            for i, (label, predicted, scores) in enumerate(zip(labels, outputs[name], by_framework[name]), 1):
+                expected = json.loads(label['result'])
+                a, b = Counter(r[1] for r in expected), Counter(r[1] for r in predicted)
+                if a != b:
+                    errors.append({
+                        'framework': name,
+                        'question_index': i, 'question': label['question'],
+                        'expected_count': len(expected), 'predicted_count': len(predicted),
+                        'name_f1': scores['name_f1'],
+                        'missing_name_counts_json': json.dumps(dict(a - b), ensure_ascii=False),
+                        'extra_name_counts_json': json.dumps(dict(b - a), ensure_ascii=False),
+                        'distinct_name_sets_equal': int(set(a) == set(b)),
+                        'predicted_sql': predictions[name][i-1]['predicted_sql'],
+                    })
+        valid_pairs = set(connection.execute(
+            'SELECT l.HOUSE_NUMBER,r.NAME FROM RESTAURANT r '
+            'JOIN LOCATION l ON l.RESTAURANT_ID=r.ID'
+        ))
+        expected_rows = [tuple(row) for label in labels for row in json.loads(label['result'])]
         audit = {
+            'reference_columns': ['HOUSE_NUMBER', 'NAME'],
             'expected_row_occurrences': len(expected_rows),
-            'inconsistent_id_name_occurrences': sum(db_names.get(row[0]) != row[1] for row in expected_rows),
+            'matching_house_number_name_occurrences': sum(row in valid_pairs for row in expected_rows),
             'empty_expected_questions': sum(not json.loads(r['result']) for r in labels),
-            'reference_note': 'Counts are row occurrences, not unique restaurant identities.',
+            'reference_note': 'The first reference column is a house number, not a restaurant ID.',
         }
     finally:
         connection.close()
@@ -157,33 +163,49 @@ def main():
         bars = ax.bar(x+(i-1)*.24, values, .23, label=display, color=color)
         for bar, value in zip(bars,values):
             ax.text(bar.get_x()+bar.get_width()/2,value+1.3,f'{value:.2f}',ha='center',fontsize=8)
-    ax.set(xticks=x,xticklabels=labels_plot,ylabel='Score (%)',ylim=(0,113),title='Identical scores across the three prompts')
+    ax.set(xticks=x,xticklabels=labels_plot,ylabel='Score (%)',ylim=(0,113),title='GPT-6.1 SOL / Medium: corrected prompt comparison')
     ax.legend(loc='upper left',ncol=3);ax.set_axisbelow(True);ax.grid(axis='y',alpha=.2)
     fig.tight_layout();save_figure(fig,'Task_4_metric_comparison.png')
 
     fig, axes = plt.subplots(1,2,figsize=(11,4.8))
-    scores = [float(r['name_f1']) for r in by_framework['ICIO']]
-    counts = [sum(v==1 for v in scores),sum(0<v<1 for v in scores),sum(v==0 for v in scores)]
-    bars=axes[0].bar(['Exact name\nmatch','Partial\noverlap','No name\noverlap'],counts,color=['#2B997D','#D69B35','#BE5151'])
-    for bar,value in zip(bars,counts):axes[0].text(bar.get_x()+bar.get_width()/2,value+2,str(value),ha='center')
-    axes[0].set(title='Per-question name F1 outcomes',ylabel='Number of questions',ylim=(0,165))
+    outcomes = []
+    for name in NAMES:
+        scores = [float(r['name_f1']) for r in by_framework[name]]
+        outcomes.append([sum(v==1 for v in scores),sum(0<v<1 for v in scores),sum(v==0 for v in scores)])
+    x = np.arange(3)
+    for i, (display, color, counts) in enumerate(zip(DISPLAY,COLORS,outcomes)):
+        bars=axes[0].bar(x+(i-1)*.24,counts,.23,label=display,color=color)
+        for bar,value in zip(bars,counts):
+            axes[0].text(bar.get_x()+bar.get_width()/2,value+2,str(value),ha='center',fontsize=8)
+    axes[0].set(xticks=x,xticklabels=['Exact name match','Partial overlap','No overlap'],title='Per-question name F1 outcomes',ylabel='Number of questions',ylim=(0,175))
+    axes[0].legend(ncol=3,fontsize=8)
     bars=axes[1].bar(DISPLAY,times,color=COLORS,yerr=[1]*3,capsize=4)
     for bar,value in zip(bars,times):axes[1].text(bar.get_x()+bar.get_width()/2,value+6,f'{value} s',ha='center')
     axes[1].set(title='One observed generation time per prompt',ylabel='Seconds',ylim=(0,215))
     for ax in axes:ax.set_axisbelow(True);ax.grid(axis='y',alpha=.2)
-    fig.suptitle('All prompts share the same outcomes; measured times differ',fontsize=14)
-    fig.text(.05,.02,'Left: counts apply to each framework. Right: ±1 s estimated manual uncertainty, not repeated-run variability.',fontsize=9,color='#555555')
+    fig.suptitle('Quality outcomes and observed generation times',fontsize=14)
+    fig.text(.05,.02,'Right: ±1 s estimated manual timing uncertainty, not repeated-run variability.',fontsize=9,color='#555555')
     fig.tight_layout(rect=(0,.06,1,.94));save_figure(fig,'Task_4_outcomes_and_time.png')
 
-    fig,ax=plt.subplots(figsize=(9,5.8))
-    indices=[int(r['question_index']) for r in errors]
-    values=[float(r['name_f1'])*100 for r in errors]
-    ax.barh([f'Question {i}' for i in indices],values,color=['#BE5151' if v==0 else '#3178A8' for v in values])
-    for y,value in enumerate(values):ax.text(value+1,y,f'{value:.2f}%',va='center',fontsize=9)
-    ax.invert_yaxis();ax.set(xlabel='Name-based F1 (%)',xlim=(0,114),title='The 12 name mismatches shared by all three prompts')
-    ax.set_axisbelow(True);ax.grid(axis='x',alpha=.2)
+    indices=sorted({int(r['question_index']) for r in errors})
+    fig,ax=plt.subplots(figsize=(8,max(3,len(indices)*.42)))
+    if indices:
+        values=np.array([[float(by_framework[name][i-1]['name_f1'])*100 for name in NAMES] for i in indices])
+        heat=ax.imshow(values,vmin=0,vmax=100,cmap='YlGnBu',aspect='auto')
+        ax.set(xticks=range(3),xticklabels=DISPLAY,yticks=range(len(indices)),yticklabels=[f'Question {i}' for i in indices],title='Name F1 on questions with a mismatch in any run')
+        for y in range(len(indices)):
+            for x in range(3):
+                v=values[y,x]
+                ax.text(x,y,f'{v:.2f}%',ha='center',va='center',color='white' if v>65 else 'black',fontsize=9)
+        fig.colorbar(heat,ax=ax,label='Name F1 (%)')
+    else:
+        ax.text(.5,.5,'All questions have exact name matches',ha='center',va='center')
+        ax.set_axis_off()
     fig.tight_layout();save_figure(fig,'Task_4_name_mismatches.png')
     print('Task 4: saved comparison tables, paired tests, error examples, audit, and three figures.')
+    additional_path = HERE / 'analyze_additional_runs.py'
+    if additional_path.exists():
+        load_module('additional_analysis', additional_path).main(paired_test)
 
 
 if __name__ == '__main__':

@@ -70,7 +70,7 @@ def main():
         or any(not isinstance(row, list) or len(row) != 2 for row in rows)
         for rows in expected_results
     ):
-        raise ValueError("Expected labels containing [ID, NAME] rows")
+        raise ValueError("Expected labels containing [HOUSE_NUMBER, NAME] rows")
 
     connection = evaluator.load_database()
     connection.execute("PRAGMA query_only = ON")

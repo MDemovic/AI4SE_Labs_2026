@@ -20,7 +20,7 @@ CONSTRAINTS
 - Use only the supplied schema and database. Do not invent tables, columns, geographic mappings, or restaurant IDs.
 - Preserve the original question text and order.
 - Generate exactly one SQLite SELECT statement per question.
-- For restaurant requests, select ID and NAME in that order, unless the question explicitly requests other fields or an aggregate.
+- For this benchmark, every query must return exactly two columns in this order: LOCATION.HOUSE_NUMBER, RESTAURANT.NAME. Join LOCATION to RESTAURANT using LOCATION.RESTAURANT_ID = RESTAURANT.ID. Use an INNER JOIN. Restaurant ID is a join key, not an output column. This output contract also applies to questions asking where a restaurant is; do not add street, city, or ID columns.
 - Match names and categories case-insensitively, for example with LOWER(). Preserve stored values in returned columns.
 - Follow numerical conditions exactly: “above” means >, “at least” means >=, “below” means <, and “at most” means <=.
 - Interpret “best” as highest RATING and “worst” as lowest RATING unless another criterion is specified.
@@ -29,7 +29,7 @@ CONSTRAINTS
 - Add LIMIT, DISTINCT, GROUP BY, or LIKE only when justified by the question.
 - Ignore unrelated narrative, but retain all actual restaurant criteria.
 - A query may legitimately return no rows. Do not remove an explicit location filter simply because that location is absent from the database.
-- For questions wholly unrelated to restaurants, return an empty restaurant result using SELECT ID, NAME FROM RESTAURANT WHERE 1 = 0;
+- For questions wholly unrelated to restaurants, return an empty restaurant result using SELECT l.HOUSE_NUMBER, r.NAME FROM RESTAURANT AS r JOIN LOCATION AS l ON l.RESTAURANT_ID = r.ID WHERE 1 = 0;
 
 OBJECTIVES
 Produce queries that accurately represent each question’s restaurant criteria, location, rating conditions, and ranking requirements.
@@ -48,7 +48,7 @@ PLAN
 Use this example as a guide to translation and formatting. Do not include it as an extra output row:
 
 question,predicted_sql
-"List Italian restaurants in Palo Alto with a rating of at least 3.","SELECT ID, NAME FROM RESTAURANT WHERE LOWER(FOOD_TYPE) = 'italian' AND LOWER(CITY_NAME) = 'palo alto' AND RATING >= 3;"
+"List Italian restaurants in Palo Alto with a rating of at least 3.","SELECT l.HOUSE_NUMBER, r.NAME FROM RESTAURANT AS r JOIN LOCATION AS l ON l.RESTAURANT_ID = r.ID WHERE LOWER(r.FOOD_TYPE) = 'italian' AND LOWER(r.CITY_NAME) = 'palo alto' AND r.RATING >= 3;"
 
 EVALUATION
 Before finishing, read the saved CSV back and verify:
