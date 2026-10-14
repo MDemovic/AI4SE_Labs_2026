@@ -1,0 +1,55 @@
+ICIO evaluation completed:
+
+Accuracy: 27.74%
+Correct: 43/155 predictions
+
+Ran on ChatGPT-6 - Medium, ran 3 times to validate variability
+
+metadata timestamp is incorrect, it took him 2min and 44sec
+
+From analysis and what we can see the low Accuracy is primarly 
+because there is discrepency between what IDs we have and expect
+for example:
+Portola Park	                        2633	3
+Catahoula Restaurant and Saloon	        4808	1457
+Lee & Ginas Cafe	                    2157	1503
+Vivace	                                5983	-1
+Caffe Italia	                        2116	6574
+
+In the next prompt ill try to make sure to include these tips the model gave me
+1. Require database inspection. The model must examine the actual stored values, rather than assume cuisine names, restaurant names, or geographic values.
+2. Require execution and validation. Every generated SQL query should be executed against a temporary SQLite database constructed from the schema and data files.
+3. Handle ambiguous questions carefully. Questions asking for the "best" restaurant should rank by RATING, while questions asking for all restaurants should not use LIMIT 1.
+4. Handle ties consistently. Multiple restaurants may have the same highest rating. Arbitrarily selecting one can produce a different result from the expected answer.
+5. Prevent invented or hardcoded identifiers. Restaurant IDs should come directly from the database, never from assumptions.
+6. Verify output structure. Ensure exactly 155 queries, in the original question order, with valid CSV escaping and executable SQLite syntax.
+
+
+REACT evaluaiton:
+Took 3min 20 sec
+Again ran Ran on ChatGPT-6 - Medium
+
+The REACT evaluation completed:
+
+Accuracy: 27.74%
+Correct: 43/155 predictions
+
+Again the same accuracy. 
+But this time the analysis shows the 12 that didnt get mismatched by the ID
+we can maybe do something about them.
+
+
+SCOPE evaluation
+Took 4min 40sec
+
+SCOPE evaluation completed:
+
+Accuracy: 27.74%
+Correct: 43/155 predictions
+
+AAAnd again the same predictions...
+
+From my side the issue with the evaluator is the main one, if the task
+and evaluator are bad, no prompt can overcome these issues, 
+from my point of view giving it the evaluator would not be ok
+since i think it would defeat the purpose

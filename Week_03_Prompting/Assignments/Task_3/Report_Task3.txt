@@ -1,0 +1,8 @@
+First i think complexity of the input is one thing that can be measured
+- Maybe a simple line count. Interpretability maybe
+
+Ok, since we know that we can achiveve from my tesitng only 43
+of the 155, mostly because of the mismatch in IDs of the evaluator
+not sure what better matric then time, since all of them achieved the 43/155
+
+...
