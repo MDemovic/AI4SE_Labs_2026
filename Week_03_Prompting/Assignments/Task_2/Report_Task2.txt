@@ -1,55 +1,38 @@
-ICIO evaluation completed:
+Task 2 – Comparing prompting frameworks
+The task was to convert natural-language restaurant questions into SQLite queries using the three prompts from Task 1: ICIO, ReAct, and SCOPE.
 
-Accuracy: 27.74%
-Correct: 43/155 predictions
+I ran each prompt in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning (ChatGPT+). Each session received the same things, schema, db, questions and the Prompt.
+The predictions CSV and a metadata.txt files for each framework are stored in respective folders. The metadata identifies the framework, prompt file, model, settings, and generation time.
+The generation time was manually recorded from the moment of submitting the prompt untill the pred. file was able to be downloaded, with an estimated uncertainty of ±1 second. 
+This measures the complete generation process, including tool execution, rather than isolated model inference time (I tried to let the model track the time but that resulted in it saying it took 0.12s).
 
-Ran on ChatGPT-6 - Medium, ran 3 times to validate variability
+When looking at the results, of running the eval script on generated predictions:
 
-metadata timestamp is incorrect, it took him 2min and 44sec
+Framework    Accuracy    Correct predictions    Generation time
+ICIO         27.74%      43/155                 122 seconds
+ReAct        27.74%      43/155                 147 seconds
+SCOPE        27.74%      43/155                 187 seconds
 
-From analysis and what we can see the low Accuracy is primarly 
-because there is discrepency between what IDs we have and expect
-for example:
-Portola Park	                        2633	3
-Catahoula Restaurant and Saloon	        4808	1457
-Lee & Ginas Cafe	                    2157	1503
-Vivace	                                5983	-1
-Caffe Italia	                        2116	6574
+All three files contained 155 predictions, had the correct question,predicted_sql header, and preserved the original question text and order. Every SQL query executed successfully.
 
-In the next prompt ill try to make sure to include these tips the model gave me
-1. Require database inspection. The model must examine the actual stored values, rather than assume cuisine names, restaurant names, or geographic values.
-2. Require execution and validation. Every generated SQL query should be executed against a temporary SQLite database constructed from the schema and data files.
-3. Handle ambiguous questions carefully. Questions asking for the "best" restaurant should rank by RATING, while questions asking for all restaurants should not use LIMIT 1.
-4. Handle ties consistently. Multiple restaurants may have the same highest rating. Arbitrarily selecting one can produce a different result from the expected answer.
-5. Prevent invented or hardcoded identifiers. Restaurant IDs should come directly from the database, never from assumptions.
-6. Verify output structure. Ensure exactly 155 queries, in the original question order, with valid CSV escaping and executable SQLite syntax.
+ICIO completed fastest in these runs. ReAct took 25 seconds longer than ICIO, while SCOPE took 65 seconds longer. 
+With only one run per framework, these differences do not establish that one framework is consistently faster. But all of them had the same accuracy. Why?
 
+The SQL statements where different accross the runs, but all three frameworks returned identical result multisets for every question. 
 
-REACT evaluaiton:
-Took 3min 20 sec
-Again ran Ran on ChatGPT-6 - Medium
+Comparison        Different SQL text    Different returned results
+ICIO vs ReAct     154/155               0/155
+ICIO vs SCOPE     145/155               0/155
+ReAct vs SCOPE    155/155               0/155
 
-The REACT evaluation completed:
+All three prompts used the same model, schema, example, and many similar translation rules. These runs did not show a retrieval improvement from ReAct or SCOPE.
+The low score is largely explained by inconsistent restaurant IDs between the supplied database and expected results.
+For example, Portola Park has ID 2633 in the database, but the expected result uses ID 3. The evaluator compares complete rows, including both ID and name. 
+A query can therefore return the expected restaurant name and still be marked incorrect because its ID differs.
 
-Accuracy: 27.74%
-Correct: 43/155 predictions
+When checking the expected results against the database, 13,232 of 13,235 expected restaurant rows had an ID/name pairing that did not match with the supplied database.
+For each framework, all 43 successful predictions corresponded to questions with empty expected results. 
+None of the questions with nonempty expected results passed the original exact-row comparison.
 
-Again the same accuracy. 
-But this time the analysis shows the 12 that didnt get mismatched by the ID
-we can maybe do something about them.
-
-
-SCOPE evaluation
-Took 4min 40sec
-
-SCOPE evaluation completed:
-
-Accuracy: 27.74%
-Correct: 43/155 predictions
-
-AAAnd again the same predictions...
-
-From my side the issue with the evaluator is the main one, if the task
-and evaluator are bad, no prompt can overcome these issues, 
-from my point of view giving it the evaluator would not be ok
-since i think it would defeat the purpose
+The evaluator follows its comparison rule, but the reference results are inconsistent with the database used for execution. 
+This limits how well the original accuracy represents text-to-SQL quality. I kept the supplied evaluation unchanged and did not adjust queries to reproduce the expected IDs. 

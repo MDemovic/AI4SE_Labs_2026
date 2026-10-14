@@ -1,0 +1,10 @@
+Framework: ReAct
+Prompt file: Week_03_Prompting/Assignments/Task_1/ReAct/Prompt.txt
+Model: GPT-6.1 SOL
+Reasoning setting: Medium
+Date: 2026-10-14
+Session: Fresh chat
+Generation time: 147 seconds (2 minutes 27 seconds)
+Estimated timing uncertainty: ±1 second
+Timing method: Manual stopwatch
+Prediction file: restaurants_dataset_predictions.csv

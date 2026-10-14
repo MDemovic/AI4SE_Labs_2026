@@ -20,11 +20,10 @@ First, I chose ICIO because the task has a very clear input and output. The mode
 - The Input identifies the files and questions to process. 
 - The Output specifies the CSV format.
 
-I hoped that this structure would help the model produce consistent queries without addional explanations or answering the questions directly. 
+I hoped that this structure would help the model produce consistent queries without additional explanations or answering the questions directly. 
 The prompt also includes an example of the required question and SQL format (for the no zero-shot prompting requirement).
 
-I first drafted the prompt using the framework and then adjusted it to fit the restaurant database and evaluation script (also at the end with the help of a chatGpt
-).
+I first drafted the prompt using the framework and then adjusted it to fit the restaurant database and evaluation script (also refined the final version with help from ChatGPT).
 
 2. ReAct
 ReAct combines reasoning, actions, and observations. 

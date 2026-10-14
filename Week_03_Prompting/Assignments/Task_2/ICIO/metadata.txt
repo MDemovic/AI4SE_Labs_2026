@@ -1,0 +1,10 @@
+Framework: ICIO
+Prompt file: Week_03_Prompting/Assignments/Task_1/ICIO/Prompt.txt
+Model: GPT-6.1 SOL
+Reasoning setting: Medium
+Date: 2026-10-14
+Session: Fresh chat
+Generation time: 122 seconds (2 minutes 2 seconds)
+Estimated timing uncertainty: ±1 second
+Timing method: Manual stopwatch
+Prediction file: restaurants_dataset_predictions.csv
