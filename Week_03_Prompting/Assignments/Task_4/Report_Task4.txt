@@ -1,1 +1,113 @@
-123
+Task 4 – Detailed comparison and interpretation
+
+I compared the revised ICIO, ReAct, and SCOPE prompts using the Task 2 predictions and the Task 3 metric (already touched on this in Task 3). 
+Each prompt was run once in a fresh session using GPT-6.1 SOL with Medium reasoning, the same input files, and the same illustrative SQL example.
+The comparison includes the original exact-row accuracy, name-only exact matching, macro name F1, and observed generation time. 
+The analysis and figures were prepared with help from a LLM.
+
+Framework   Original accuracy   Name exact match   Macro name F1   Nonempty name F1   Time
+ICIO        27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             122 s
+ReAct       27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             147 s
+SCOPE       27.74% (43/155)     92.26% (143/155)   98.49%          97.91%             187 s
+
+Nonempty name F1 is the average over the 112 questions with nonempty expected results. 
+Macro name precision was 98.32% and macro name recall was 98.71% for every framework. There were no SQL execution errors.
+
+Figures in this folder:
+- Task_4_metric_comparison.png compares all four quality scores.
+- Task_4_outcomes_and_time.png shows the shared outcome distribution and observed times.
+- Task_4_name_mismatches.png shows F1 for the 12 questions without an exact name match.
+
+
+All frameworks returned identical result multisets on all 155 questions. Their SQL text differed on 154 questions for ICIO versus ReAct, 145 for ICIO versus SCOPE, and 155 for ReAct versus SCOPE. 
+Again what this means is that different SQL sentences have the same affect. The original accuracy was low mainly because the reference ID/name pairs are inconsistent with the supplied database. 
+Of 13,235 expected row occurrences, 13,232 did not have an ID/name pairing matching the database. These counts include repeated occurrences, not just unique restaurants.
+
+All 43 original exact matches were questions with empty expected results. No nonempty expected result passed the original comparison, which makes the
+original metric weak for comparing these prompts here, even though the evaluator correctly applies its stated rule. This, we could not affect with the change of a prompt.
+
+Name-only exact matching is much higher, but still fails on 12 questions. F1 distinguishes partial overlap from complete failure: 143 questions scored 1, 10 scored between 0 and 1, and two scored 0. 
+The high F1 therefore does not mean every question was answered correctly.
+
+Looking only at nonempty references lowers F1 from 98.49% to 97.91%. This shows that the overall score is helped by empty matches, but substantial name overlap remains without them. 
+An empty match also cannot verify which columns the query selected.
+
+
+Question   Expected rows   Predicted rows   Name F1
+23         62              63               99.20%
+26         154             161              97.78%
+28         62              63               99.20%
+30         37              41               94.87%
+35         18              19               97.30%
+66         2696            0                0.00%
+87         9171            9221             99.73%
+93         63              64               99.21%
+102        159             161              99.38%
+119        201             202              99.75%
+121        2               3                80.00%
+131        3               0                0.00%
+
+
+The same table applies to all three prompts. Full questions, missing and extra name counts, and representative ICIO SQL are stored in name_mismatch_examples.csv.
+For all 10 partial matches, every expected name occurrence was returned, but additional occurrences were present. 
+Some mismatches involve how the database represents restaurants rather than an obviously incorrect condition.
+
+For questions 23 and 28, the extra occurrence is "genghis khan kitehen". The database stores two rows with that name, both in Alameda with rating 2.3, but under different cuisines and IDs. 
+Both satisfy the requested rating above 2. The expected names contain one occurrence. 
+
+Question 35 similarly includes an extra occurrence of "millie's kitchen", stored under both american and cafe. For these three questions, the distinct name sets match exactly; only multiplicity differs.
+
+This highlights a limitation of the metric: it respects database row counts but cannot decide whether repeated entries represent separate restaurants or multiple descriptions of one restaurant. 
+Automatically applying DISTINCT to names would also risk combining genuinely different restaurants.
+
+Question 121 asks for yogurt restaurants in Santa Rosa with rating above 1.7. The extra name is "checkers pizza & frozen yogurt", which is present in the supplied database under yogurt, 
+Santa Rosa, with rating 2.0. Its inclusion follows the explicit filter. The mismatch does not by itself prove an interpretation error.
+
+Question 66 asks "What is the lifes greates illusion?". All prompts returned an empty restaurant result, while the reference contains 2,696 rows. 
+The question provides no clear restaurant criteria, so we cannot treat this as a failirue on the intrepreters part.
+
+Question 131 asks for Thai restaurants in "unknown" with rating above 2.7. The queries treated unknown as a literal city, but the database has no such city. 
+The expected names include restaurants in other cities. This suggests the reference may interpret unknown as an unspecified location. That is an ambiguity, not something syntax validation can resolve. 
+A future prompt could explicitly define placeholder handling, but should do so consistently and without copying these particular answers.
+
+
+Pointers that would help:
+- Define how prompts should handle "unknown" locations and unrelated questions.
+- Clarify whether queries should return database rows or unique restaurants.
+- Add a distinct-name score alongside multiset F1 to separate duplicate-count differences from missing or extra names.
+
+--- Comparison ---
+
+I compared the prompts question by question because they answered the same questions.
+The analysis used a paired permutation test, which checks whether swapping prompt labels within each question changes the average score difference. 
+Here, every question had the same score across prompts, so swapping labels changed nothing. The p-value was therefore 1 for every comparison.
+
+Comparison       Original accuracy p   Name exact-match p   Name F1 p
+ICIO vs ReAct    1.000                 1.000                1.000
+ICIO vs SCOPE    1.000                 1.000                1.000
+ReAct vs SCOPE   1.000                 1.000                1.000
+
+Using a significance threshold of 0.05, there was no statistically significant quality difference. 
+This applies to these saved outputs; it does not prove that the prompts would perform equally on other questions or repeated runs.
+Generation times were different: ICIO took 122 seconds, ReAct 147, and SCOPE 187. 
+However, one run per prompt is not enough to test whether these speed differences are consistent. The ±1 second describes stopwatch uncertainty, not variation between runs.
+
+
+Prompts: All three used the same schema, example, output format, and similar SQL rules. These shared instructions may explain the identical results.
+Since some rules also differed, this was not a comparison of framework structure alone.
+
+Model: The same model and reasoning setting were used throughout. It may handle these questions similarly with all three prompts, but more runs would be needed to check that.
+Coding agent and tools: Python execution can catch SQL errors, but it cannot fix inconsistent reference IDs or decide how every ambiguous question should be interpreted. 
+Without the generation logs, I cannot confirm exactly how each agent followed the prompt (since ChatGPT doesn't expose this).
+
+Timing: Extra checks, tool calls, and service delays may explain the longer runs. These are possible causes, not things measured in this experiment.
+
+--- Interpretation ---
+
+ICIO was fastest in this comparison and achieved the same measured quality as ReAct and SCOPE. The longer prompts did not improve the returned results in these runs.
+The original accuracy was limited by inconsistent reference IDs. The name-based metric showed high overlap, 
+while the remaining mismatches highlighted duplicate restaurant entries, unclear questions, and questionable reference results.
+A stronger experiment would clarify the reference data, use consistent rules and tool access, and repeat each prompt several times.
+
+--- Reproducibilty ---
+python Week_03_Prompting/Assignments/Task_4/analyze_results.py

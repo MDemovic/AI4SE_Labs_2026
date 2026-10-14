@@ -1,0 +1,6 @@
+{
+  "expected_row_occurrences": 13235,
+  "inconsistent_id_name_occurrences": 13232,
+  "empty_expected_questions": 43,
+  "reference_note": "Counts are row occurrences, not unique restaurant identities."
+}

@@ -1,0 +1,10 @@
+prompt_a,prompt_b,metric,question_count,nonzero_paired_differences,mean_difference_a_minus_b,two_sided_p_value,significant_at_0_05,method
+ICIO,REACT,original_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+ICIO,REACT,name_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+ICIO,REACT,name_f1,155,0,0.0,1.0,0,exact: all paired differences zero
+ICIO,SCOPE,original_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+ICIO,SCOPE,name_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+ICIO,SCOPE,name_f1,155,0,0.0,1.0,0,exact: all paired differences zero
+REACT,SCOPE,original_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+REACT,SCOPE,name_exact,155,0,0.0,1.0,0,exact: all paired differences zero
+REACT,SCOPE,name_f1,155,0,0.0,1.0,0,exact: all paired differences zero
