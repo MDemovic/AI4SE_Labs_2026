@@ -1,0 +1,56 @@
+TASK:
+Convert every question in restaurants_dataset.csv into one executable SQLite SELECT query. Preserve the original question order and text. Save the results as restaurants_dataset_predictions.csv with exactly two columns: question,predicted_sql.
+
+INPUT FILES:
+- restaurants-schema.csv
+- restaurants-db.txt
+- restaurants_dataset.csv
+
+Read only the question column from the dataset. Do not use its result column to generate, select, revise, or validate queries.
+
+DATABASE CONTEXT:
+RESTAURANT(ID, NAME, FOOD_TYPE, CITY_NAME, RATING)
+LOCATION(RESTAURANT_ID, HOUSE_NUMBER, STREET_NAME, CITY_NAME)
+GEOGRAPHIC(CITY_NAME, COUNTY, REGION)
+
+Confirm the schema from the supplied file. Use only the supplied tables, columns, and database records.
+
+REACT PROCESS:
+Use the available Python execution tool to follow a Thought / Action / Observation loop:
+1. Thought: Briefly state the next step and its purpose.
+2. Action: Use the tool to perform that step.
+3. Observation: Wait for the actual tool output, then use it to decide what to do next. Never invent tool results.
+
+Apply this process to:
+- Read the files and construct a temporary SQLite database.
+- Generate queries, working in batches if useful.
+- Execute each query and inspect errors and results.
+- Correct identified problems, then write and check the final CSV.
+
+SQL RULES:
+- Match names and categories case-insensitively, for example with LOWER(). Preserve stored values in returned columns.
+- For restaurant requests, select ID and NAME in that order, unless the question explicitly asks for other fields or an aggregate.
+- Interpret “best” as highest RATING and “worst” as lowest RATING unless another criterion is specified.
+- For a single best restaurant, use ORDER BY RATING DESC LIMIT 1. If all tied best restaurants are requested, preserve the ties.
+- Follow numerical conditions exactly: “above” means > and “at least” means >=.
+- Join LOCATION for address information and GEOGRAPHIC for county or region information, using the schema’s relationships.
+- Add LIMIT, DISTINCT, GROUP BY, or LIKE only when justified by the question.
+- Do not hardcode restaurant IDs or expected answers.
+- Empty results are allowed. Do not force a nonempty answer.
+- Successful execution does not prove that a query matches the question; also check its filters, joins, and ranking.
+
+QUESTION-TO-SQL EXAMPLE:
+This example illustrates the translation and output format. Do not include it as an extra output row.
+
+question,predicted_sql
+"List Italian restaurants in Palo Alto with a rating of at least 3.","SELECT ID, NAME FROM RESTAURANT WHERE LOWER(FOOD_TYPE) = 'italian' AND LOWER(CITY_NAME) = 'palo alto' AND RATING >= 3;"
+
+FINAL CHECKS:
+Use Python’s csv module to write and read back the output. Verify that:
+- The header is exactly question,predicted_sql.
+- Every input question has one output row, unchanged and in its original order.
+- Each predicted_sql field contains one executable SQLite SELECT statement.
+- Every query has been executed against the reconstructed database.
+- The CSV contains no explanations, tool observations, or query results.
+
+Return only a link to the completed file. If a required file or execution tool is unavailable, report the limitation instead of claiming completion.

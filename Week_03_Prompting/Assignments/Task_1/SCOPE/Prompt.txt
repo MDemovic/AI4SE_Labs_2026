@@ -1,0 +1,62 @@
+SCOPE — RESTAURANT TEXT-TO-SQL PROMPT
+
+SITUATION
+Convert every question in restaurants_dataset.csv into one executable SQLite SELECT query.
+
+Use these supplied files:
+- restaurants-schema.csv
+- restaurants-db.txt
+- restaurants_dataset.csv
+
+The database contains:
+RESTAURANT(ID, NAME, FOOD_TYPE, CITY_NAME, RATING)
+LOCATION(RESTAURANT_ID, HOUSE_NUMBER, STREET_NAME, CITY_NAME)
+GEOGRAPHIC(CITY_NAME, COUNTY, REGION)
+
+Confirm the actual schema from the supplied file.
+
+CONSTRAINTS
+- Read only the question column from the dataset. Do not use the result column to generate, select, revise, or validate queries.
+- Use only the supplied schema and database. Do not invent tables, columns, geographic mappings, or restaurant IDs.
+- Preserve the original question text and order.
+- Generate exactly one SQLite SELECT statement per question.
+- For restaurant requests, select ID and NAME in that order, unless the question explicitly requests other fields or an aggregate.
+- Match names and categories case-insensitively, for example with LOWER(). Preserve stored values in returned columns.
+- Follow numerical conditions exactly: “above” means >, “at least” means >=, “below” means <, and “at most” means <=.
+- Interpret “best” as highest RATING and “worst” as lowest RATING unless another criterion is specified.
+- For a single best restaurant, use ORDER BY RATING DESC LIMIT 1. If all tied best restaurants are requested, preserve the ties.
+- Use joins for address, county, or region information when required.
+- Add LIMIT, DISTINCT, GROUP BY, or LIKE only when justified by the question.
+- Ignore unrelated narrative, but retain all actual restaurant criteria.
+- A query may legitimately return no rows. Do not remove an explicit location filter simply because that location is absent from the database.
+- For questions wholly unrelated to restaurants, return an empty restaurant result using SELECT ID, NAME FROM RESTAURANT WHERE 1 = 0;
+
+OBJECTIVES
+Produce queries that accurately represent each question’s restaurant criteria, location, rating conditions, and ranking requirements.
+
+Avoid missing or extra restaurants caused by incorrect filters, unnecessary limits, or duplicate-producing joins. Save all queries in the required CSV format.
+
+PLAN
+1. Read the supplied files and construct a temporary SQLite database using the available Python execution tool.
+2. Inspect stored cuisine and geographic values when needed to interpret a question.
+3. Identify the requested columns, filters, joins, ranking, and any explicitly requested result limit.
+4. Generate each query and execute it against the database. Queries may be processed in batches.
+5. Check syntax errors and whether the filters and returned results reasonably match the question. Successful execution alone does not prove correctness.
+6. Correct identified problems without consulting evaluation labels.
+7. Write the output using Python’s csv module.
+
+Use this example as a guide to translation and formatting. Do not include it as an extra output row:
+
+question,predicted_sql
+"List Italian restaurants in Palo Alto with a rating of at least 3.","SELECT ID, NAME FROM RESTAURANT WHERE LOWER(FOOD_TYPE) = 'italian' AND LOWER(CITY_NAME) = 'palo alto' AND RATING >= 3;"
+
+EVALUATION
+Before finishing, read the saved CSV back and verify:
+- The header is exactly question,predicted_sql.
+- Every input question has one output row, unchanged and in its original order.
+- Each SQL field contains one executable SQLite SELECT statement.
+- Every query has been executed against the reconstructed database.
+- Selected columns, numerical conditions, joins, and ranking follow the question.
+- The CSV contains no explanations, tool output, or query results.
+
+Save the file as restaurants_dataset_predictions.csv and return only a link to it. If a required file or execution tool is unavailable, report the limitation instead of claiming completion.
