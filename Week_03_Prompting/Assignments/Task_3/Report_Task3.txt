@@ -1,11 +1,9 @@
 Task 3 – Name-based result metric
 
-When looking at the previous results, we see that the evaluation metric is not great, mainly because the evaluators data is incorrect - the combinations of IDs and names.
-Thats why I chose a name-based multiset as an new metric, meaning that we compare the expected names, but do not also compare the IDs.
-I will be measuring F1 rather than only exact matching because it gives partial credit when a query returns some, but not all, expected restaurants ando penalizes extra restaurants, which is good since 
-I think the questions can return multiple restaurants, so measuring both missing and extra results is useful. I do know that F1 may not be the most original idea, but I think it best captures the missing information from the Task 2 metric.
+Because the reference IDs are inconsistent with the supplied database, I chose name-based multiset F1 as an additional metric. It compares restaurant names while preserving duplicate counts. 
+F1 gives partial credit and accounts for both missing and extra results, which is useful because questions can return multiple restaurants.
 
-For each question, I execute the generated SQL against the generated database and compare its restaurant names with the expected names.
+For each question, I execute the generated SQL against a SQLite database reconstructed from the supplied files and compare its restaurant names with the expected names.
 - Names are compared exactly as stored, without fuzzy matching or changing letter case. 
 - Duplicate names are counted rather than removed. For each name, the number of matches is the smaller of its expected and predicted counts.
 
@@ -32,6 +30,9 @@ It reads expected results only during evaluation and does not change the predict
 For nonempty predictions, the script extracts the NAME column. IDs and any additional output columns are ignored by the name metric. 
 Invalid nonempty outputs without a NAME column receive 0 and are recorded as errors. 
 Empty results are compared as empty multisets, matching the original evaluator's approach.
+
+Run from the repository root:
+python Week_03_Prompting/Assignments/Task_3/evaluate_name_metrics.py
 
 Output:
 - name_metrics_summary.csv: metric values for each framework.

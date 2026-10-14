@@ -1,10 +1,10 @@
 Task 2 – Comparing prompting frameworks
 The task was to convert natural-language restaurant questions into SQLite queries using the three prompts from Task 1: ICIO, ReAct, and SCOPE.
 
-I ran each prompt in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning (ChatGPT+). Each session received the same things, schema, db, questions and the Prompt.
+I ran each framework’s prompt once in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning and the same schema, database, and question file.
 The predictions CSV and a metadata.txt files for each framework are stored in respective folders. The metadata identifies the framework, prompt file, model, settings, and generation time.
 The generation time was manually recorded from the moment of submitting the prompt untill the pred. file was able to be downloaded, with an estimated uncertainty of ±1 second. 
-This measures the complete generation process, including tool execution, rather than isolated model inference time (I tried to let the model track the time but that resulted in it saying it took 0.12s).
+This measures the complete generation process, including tool execution, rather than isolated model inference time.
 
 When looking at the results, of running the eval script on generated predictions:
 
@@ -19,21 +19,12 @@ The comparison of accuracy and generation time is shown in Task_2_visualization.
 ICIO completed fastest in these runs. ReAct took 25 seconds longer than ICIO, while SCOPE took 65 seconds longer. 
 With only one run per framework, these differences do not establish that one framework is consistently faster. But all of them had the same accuracy. Why?
 
-The SQL statements where different accross the runs, but all three frameworks returned identical result multisets for every question. 
-
-Comparison        Different SQL text    Different returned results
-ICIO vs ReAct     154/155               0/155
-ICIO vs SCOPE     145/155               0/155
-ReAct vs SCOPE    155/155               0/155
+Although the SQL text differed, all three prompts returned identical result multisets for every question. Task 4 examines this in more detail.
 
 All three prompts used the same model, schema, example, and many similar translation rules. These runs did not show a retrieval improvement from ReAct or SCOPE.
 The low score is largely explained by inconsistent restaurant IDs between the supplied database and expected results.
 For example, Portola Park has ID 2633 in the database, but the expected result uses ID 3, which belongs to helmand restaurant. The evaluator compares complete rows, including both ID and name. 
 A query can therefore return the expected restaurant name and still be marked incorrect because its ID differs.
-
-When checking the expected results against the database, 13,232 of 13,235 expected restaurant rows had an ID/name pairing that did not match with the supplied database.
-For each framework, all 43 successful predictions corresponded to questions with empty expected results. 
-None of the questions with nonempty expected results passed the original exact-row comparison.
 
 The evaluator follows its comparison rule, but the reference results are inconsistent with the database used for execution. 
 This limits how well the original accuracy represents text-to-SQL quality. I kept the supplied evaluation unchanged and did not adjust queries to reproduce the expected IDs.

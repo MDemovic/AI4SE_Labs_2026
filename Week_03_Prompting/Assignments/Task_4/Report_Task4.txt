@@ -1,6 +1,6 @@
 Task 4 – Detailed comparison and interpretation
 
-I compared the revised ICIO, ReAct, and SCOPE prompts using the Task 2 predictions and the Task 3 metric (already touched on this in Task 3). 
+I compared the revised ICIO, ReAct, and SCOPE prompts using the Task 2 predictions and the Task 3 metric. 
 Each prompt was run once in a fresh session using GPT-6.1 SOL with Medium reasoning, the same input files, and the same illustrative SQL example.
 The comparison includes the original exact-row accuracy, name-only exact matching, macro name F1, and observed generation time. 
 The analysis and figures were prepared with help from a LLM.
@@ -20,11 +20,12 @@ Figures in this folder:
 
 
 All frameworks returned identical result multisets on all 155 questions. Their SQL text differed on 154 questions for ICIO versus ReAct, 145 for ICIO versus SCOPE, and 155 for ReAct versus SCOPE. 
-Again what this means is that different SQL sentences have the same affect. The original accuracy was low mainly because the reference ID/name pairs are inconsistent with the supplied database. 
+The original accuracy was low mainly because the reference ID/name pairs are inconsistent with the supplied database. 
 Of 13,235 expected row occurrences, 13,232 did not have an ID/name pairing matching the database. These counts include repeated occurrences, not just unique restaurants.
 
 All 43 original exact matches were questions with empty expected results. No nonempty expected result passed the original comparison, which makes the
-original metric weak for comparing these prompts here, even though the evaluator correctly applies its stated rule. This, we could not affect with the change of a prompt.
+original metric weak for comparing these prompts here, even though the evaluator correctly applies its stated rule. 
+Changing the prompt cannot recover the reference ID mapping from the supplied schema and database alone.
 
 Name-only exact matching is much higher, but still fails on 12 questions. F1 distinguishes partial overlap from complete failure: 143 questions scored 1, 10 scored between 0 and 1, and two scored 0. 
 The high F1 therefore does not mean every question was answered correctly.
@@ -64,7 +65,7 @@ Question 121 asks for yogurt restaurants in Santa Rosa with rating above 1.7. Th
 Santa Rosa, with rating 2.0. Its inclusion follows the explicit filter. The mismatch does not by itself prove an interpretation error.
 
 Question 66 asks "What is the lifes greates illusion?". All prompts returned an empty restaurant result, while the reference contains 2,696 rows. 
-The question provides no clear restaurant criteria, so we cannot treat this as a failirue on the intrepreters part.
+The question provides no clear restaurant criteria, so this mismatch does not clearly demonstrate a model error, but rather a potentially unsuitable question.
 
 Question 131 asks for Thai restaurants in "unknown" with rating above 2.7. The queries treated unknown as a literal city, but the database has no such city. 
 The expected names include restaurants in other cities. This suggests the reference may interpret unknown as an unspecified location. That is an ambiguity, not something syntax validation can resolve. 
@@ -98,16 +99,17 @@ Since some rules also differed, this was not a comparison of framework structure
 
 Model: The same model and reasoning setting were used throughout. It may handle these questions similarly with all three prompts, but more runs would be needed to check that.
 Coding agent and tools: Python execution can catch SQL errors, but it cannot fix inconsistent reference IDs or decide how every ambiguous question should be interpreted. 
-Without the generation logs, I cannot confirm exactly how each agent followed the prompt (since ChatGPT doesn't expose this).
+ChatGPT does not expose its full internal reasoning (only partial reasoning summaries), so I could verify the generated SQL but not whether it followed every reasoning step requested by the framework. 
 
 Timing: Extra checks, tool calls, and service delays may explain the longer runs. These are possible causes, not things measured in this experiment.
 
 --- Interpretation ---
 
 ICIO was fastest in this comparison and achieved the same measured quality as ReAct and SCOPE. The longer prompts did not improve the returned results in these runs.
-The original accuracy was limited by inconsistent reference IDs. The name-based metric showed high overlap, 
-while the remaining mismatches highlighted duplicate restaurant entries, unclear questions, and questionable reference results.
 A stronger experiment would clarify the reference data, use consistent rules and tool access, and repeat each prompt several times.
 
 --- Reproducibilty ---
+Requires Python with matplotlib and numpy. Run the following command from the repository root.
+
 python Week_03_Prompting/Assignments/Task_4/analyze_results.py
+-- https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html

@@ -5,14 +5,9 @@ I used the site provided for references:
 https://frompting.com/frameworks
 
 I selected ICIO, ReAct, and SCOPE and adjusted them to the supplied restaurant database and required CSV output.
+All three prompts include the same question-to-SQL example, so none uses zero-shot prompting.
 
 1. ICIO
-
-ICIO consists of four parts:
-- Instruction
-- Context
-- Input
-- Output
 
 First, I chose ICIO because the task has a very clear input and output. The model receives restaurant questions and turns each into a SQL query.
 - The Instruction describes what the model should do. 
@@ -21,7 +16,6 @@ First, I chose ICIO because the task has a very clear input and output. The mode
 - The Output specifies the CSV format.
 
 I hoped that this structure would help the model produce consistent queries without additional explanations or answering the questions directly. 
-The prompt also includes an example of the required question and SQL format (for the no zero-shot prompting requirement).
 
 I first drafted the prompt using the framework and then adjusted it to fit the restaurant database and evaluation script (also refined the final version with help from ChatGPT).
 
@@ -39,12 +33,6 @@ However, a query running successfully does not necessarily mean it answers the q
 Similarly as before, I first drafted it using the template from the website and then adjusted it with the help of an LLM
 
 3. SCOPE
-SCOPE consists of five parts:
-- Situation
-- Constraints
-- Objectives
-- Plan
-- Evaluation
 
 I chose SCOPE because it provides room to describe both the task and the checks the model should perform.
 The Situation explains the text-to-SQL task. 
