@@ -1,8 +1,53 @@
-First i think complexity of the input is one thing that can be measured
-- Maybe a simple line count. Interpretability maybe
+Task 3 – Name-based result metric
 
-Ok, since we know that we can achiveve from my tesitng only 43
-of the 155, mostly because of the mismatch in IDs of the evaluator
-not sure what better matric then time, since all of them achieved the 43/155
+When looking at the previous results, we see that the evaluation metric is not great, mainly because the evaluators data is incorrect - the combinations of IDs and names.
+Thats why I chose a name-based multiset as an new metric, meaning that we compare the expected names, but do not also compare the IDs.
+I will be measuring F1 rather than only exact matching because it gives partial credit when a query returns some, but not all, expected restaurants ando penalizes extra restaurants, which is good since 
+I think the questions are more suitable for a single answer. I do know that F1 may not be the most original idea, but I think it best captures the missing information from the Task 2 metric.
 
-...
+For each question, I execute the generated SQL against the generated database and compare its restaurant names with the expected names.
+- Names are compared exactly as stored, without fuzzy matching or changing letter case. 
+- Duplicate names are counted rather than removed. For each name, the number of matches is the smaller of its expected and predicted counts.
+
+--- Metric ---
+TP = total number of matched name occurrences
+FP = number of predicted name occurrences minus TP
+FN = number of expected name occurrences minus TP
+
+Precision = TP / (TP + FP)
+Recall = TP / (TP + FN)
+F1 = 2 * TP / (2 * TP + FP + FN)
+
+For example, if the expected names are [A, B, C] and the predicted names are [A, B, D, E], there are two matches, two extra names, and one missing name. Precision is 2/4, recall is 2/3, and F1 is 4/7, or about 57.14%.
+- When both results are empty, precision, recall, and F1 are defined as 1. 
+- When only one is empty, they are defined as 0. A query that fails execution receives 0, even if its expected result is empty.
+
+The final score is macro F1: the average of the per-question F1 scores. Each question has equal weight, so questions returning many restaurants do not dominate the comparison.
+I also report exact-match name accuracy, along the F1
+
+
+--- Implementation ---
+evaluate_name_metrics.py = It loads the existing Task 2 prediction files and uses the new evaluator's database-loading function. 
+It reads expected results only during evaluation and does not change the predictions or labels.
+For nonempty predictions, the script extracts the NAME column. IDs and any additional output columns are ignored by the name metric. 
+Invalid nonempty outputs without a NAME column receive 0 and are recorded as errors. 
+Empty results are compared as empty multisets, matching the original evaluator's approach.
+
+Output:
+- name_metrics_summary.csv: metric values for each framework.
+- name_metrics_per_question.csv: scores, result counts, and errors for each question.
+
+
+--- Results ---
+Framework    Original accuracy    Name exact match    Macro name F1
+ICIO         27.74% (43/155)      92.26% (143/155)    98.49%
+ReAct        27.74% (43/155)      92.26% (143/155)    98.49%
+SCOPE        27.74% (43/155)      92.26% (143/155)    98.49%
+
+All three frameworks had the same scores because their returned result were identical for all 155 questions, even tho their SQL wordings were different. 
+For each framework, 12 questions did not match the complete expected name multiset. The higher F1 score shows that these mismatches often had substantial overlap rather than being completely wrong.
+There are 43 questions with empty expected results, like we saw in the task before. I also calculated macro F1 over the 112 questions with nonempty expected results, which was 97.91% for all three frameworks.
+This metric complements the original accuracy; it does not replace it. The original metric checks complete returned rows. Name-based F1 focuses on restaurant retrieval while avoiding the inconsistent reference IDs.
+
+Different restaurants can share a name, so matching names does not prove that the correct restaurant identities were retrieved. The metric also ignores address fields and other output columns. 
+Empty results can match even when the query selects inappropriate columns. Finally, it still relies on the expected names being correct.

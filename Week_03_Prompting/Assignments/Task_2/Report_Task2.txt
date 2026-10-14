@@ -14,6 +14,7 @@ ReAct        27.74%      43/155                 147 seconds
 SCOPE        27.74%      43/155                 187 seconds
 
 All three files contained 155 predictions, had the correct question,predicted_sql header, and preserved the original question text and order. Every SQL query executed successfully.
+The comparison of accuracy and generation time is shown in Task_2_visualization.png, stored in this folder. Timing error bars show the estimated manual measurement uncertainty of ±1 second.
 
 ICIO completed fastest in these runs. ReAct took 25 seconds longer than ICIO, while SCOPE took 65 seconds longer. 
 With only one run per framework, these differences do not establish that one framework is consistently faster. But all of them had the same accuracy. Why?
@@ -27,7 +28,7 @@ ReAct vs SCOPE    155/155               0/155
 
 All three prompts used the same model, schema, example, and many similar translation rules. These runs did not show a retrieval improvement from ReAct or SCOPE.
 The low score is largely explained by inconsistent restaurant IDs between the supplied database and expected results.
-For example, Portola Park has ID 2633 in the database, but the expected result uses ID 3. The evaluator compares complete rows, including both ID and name. 
+For example, Portola Park has ID 2633 in the database, but the expected result uses ID 3, which belongs to helmand restaurant. The evaluator compares complete rows, including both ID and name. 
 A query can therefore return the expected restaurant name and still be marked incorrect because its ID differs.
 
 When checking the expected results against the database, 13,232 of 13,235 expected restaurant rows had an ID/name pairing that did not match with the supplied database.
@@ -35,4 +36,4 @@ For each framework, all 43 successful predictions corresponded to questions with
 None of the questions with nonempty expected results passed the original exact-row comparison.
 
 The evaluator follows its comparison rule, but the reference results are inconsistent with the database used for execution. 
-This limits how well the original accuracy represents text-to-SQL quality. I kept the supplied evaluation unchanged and did not adjust queries to reproduce the expected IDs. 
+This limits how well the original accuracy represents text-to-SQL quality. I kept the supplied evaluation unchanged and did not adjust queries to reproduce the expected IDs.
