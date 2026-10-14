@@ -28,7 +28,7 @@ I chose this framework because generating SQL is only part of the task. The mode
 The prompt asks the model to read the supplied files, build a temporary SQLite database, generate queries, and check them before saving the CSV. 
 It also tells the model not to invent tool observations or claim that a query was tested without actually running it.
 
-Nevertheless, I hoped that this approach would be better than the first, and catch any syntax errors and reduce assumptions about the stored data (after seeing the predictions from ICIO). 
+After seeing the predictions from ICIO, I hoped this approach would be better at catching syntax errors and checking the stored data instead of making assumptions. 
 However, a query running successfully does not necessarily mean it answers the question correctly (as we will see).
 
 Similarly as before, I first drafted it using the template from the website and then adjusted it with the help of an LLM

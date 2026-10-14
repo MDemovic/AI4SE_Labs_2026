@@ -1,0 +1,47 @@
+Task 1 – Prompting frameworks
+The task is to create three prompts using three different frameworks.
+
+I used the site provided for references:
+https://frompting.com/frameworks
+
+I selected ICIO, ReAct, and SCOPE and adjusted them to the supplied restaurant database and required CSV output.
+All three prompts include the same question-to-SQL example, so none uses zero-shot prompting.
+The initial prompts incorrectly requested restaurant ID and NAME. I corrected all three prompts to return HOUSE_NUMBER and NAME using a join between RESTAURANT and LOCATION.
+
+1. ICIO
+
+First, I chose ICIO because the task has a very clear input and output. The model receives restaurant questions and turns each into a SQL query.
+- The Instruction describes what the model should do. 
+- The Context provides the database schema and rules for interpreting questions. 
+- The Input identifies the files and questions to process. 
+- The Output specifies the CSV format.
+
+I hoped that this structure would help the model produce consistent queries without additional explanations or answering the questions directly. 
+
+I first drafted the prompt using the framework and then adjusted it to fit the restaurant database and evaluation script (also refined the final version with help from ChatGPT).
+
+2. ReAct
+ReAct combines reasoning, actions, and observations. 
+In my prompt, the model should decide what to check, use a Python tool, and wait for the actual tool output before continuing.
+I chose this framework because generating SQL is only part of the task. The model can also inspect the database and execute its queries to check whether they work.
+
+The prompt asks the model to read the supplied files, build a temporary SQLite database, generate queries, and check them before saving the CSV. 
+It also tells the model not to invent tool observations or claim that a query was tested without actually running it.
+
+After seeing the predictions from ICIO, I hoped this approach would be better at catching syntax errors and checking the stored data instead of making assumptions. 
+However, a query running successfully does not necessarily mean it answers the question correctly (as we will see).
+
+Similarly as before, I first drafted it using the template from the website and then adjusted it with the help of an LLM
+
+3. SCOPE
+
+I chose SCOPE because it provides room to describe both the task and the checks the model should perform.
+The Situation explains the text-to-SQL task. 
+The Constraints define rules about the schema, output columns, and use of evaluation labels. 
+The Objectives describe what the queries should achieve. The Plan gives the model a sequence to follow. 
+The Evaluation section lists checks to complete before saving the output.
+
+Again, I tried looking for a framework, that could help with questions containing unclear wording, rating conditions, rankings, or unrelated information. 
+The prompt pays particular attention to unnecessary limits, tied ratings, geographic filters, and joins.
+
+The SCOPE prompt was written after reviewing my earlier attempts so it includes more detailed instructions based on the issues in the previous attempts.

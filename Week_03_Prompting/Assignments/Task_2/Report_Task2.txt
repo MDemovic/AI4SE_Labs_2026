@@ -4,7 +4,7 @@ The task was to convert natural-language restaurant questions into SQLite querie
 I ran each corrected framework’s prompt once in a fresh ChatGPT session using GPT-6.1 SOL with Medium reasoning and the same schema, database, and question file.
 The predictions CSV and a metadata.txt files for each framework are stored in respective folders. The metadata identifies the framework, prompt file, model, settings, and generation time.
 The generation time was manually recorded from the moment of submitting the prompt untill the pred. file was able to be downloaded, with an estimated uncertainty of ±1 second. 
-This measures the complete generation process, including tool execution, rather than isolated model inference time.
+This includes the time spent using tools, not just generating the answer.
 
 When looking at the results, of running the eval script on generated predictions:
 
@@ -17,18 +17,18 @@ All three files contained 155 predictions, had the correct question,predicted_sq
 The comparison of accuracy and generation time is shown in Task_2_visualization.png, stored in this folder. Timing error bars show the estimated manual measurement uncertainty of ±1 second.
 
 ICIO completed fastest in these runs. ReAct took 12 seconds longer than ICIO, while SCOPE took 27 seconds longer. 
-With only one run per framework, these differences do not establish that one framework is consistently faster. But all of them had the same accuracy. Why?
+With only one run per framework, this does not show that one framework is always faster. But all of them had the same accuracy. Why?
 
-Although the SQL text differed, all three prompts returned identical result multisets for every question. Task 4 examines this in more detail.
+Although the SQL text differed, all three prompts returned the same rows, including duplicate counts, for every question. Task 4 examines this in more detail.
 
-All three prompts used the same model, schema, example, and many similar translation rules. These runs did not show a retrieval improvement from ReAct or SCOPE.
-The initial runs achieved only 27.74%, which I first attributed to inconsistent restaurant IDs. This interpretation was wrong.
+All three prompts used the same model, schema, example, and many similar translation rules. ReAct and SCOPE did not improve the returned results in these runs.
+The initial runs achieved only 27.74%, which I first thought was caused by inconsistent restaurant IDs. That explanation was wrong.
 The prompts explicitly requested restaurant ID and NAME, but the expected results contain HOUSE_NUMBER and NAME. The models followed our incorrect instruction.
 For example, Portola Park has restaurant ID 2633 and house number 3. The expected result uses 3 because it represents the house number, not the restaurant ID.
 
 I corrected all three prompts to join RESTAURANT and LOCATION and return HOUSE_NUMBER and NAME, then repeated the runs in fresh sessions.
 The supplied evaluator was kept unchanged. After correcting the output columns, all three prompts achieved 94.84%.
 
-Part of the experimentation was spent identifying and correcting the shared output-column mistake. I then ran an additional comparison using GPT luna with High reasoning and Chat / Instant mode. Those predictions and metadata are stored in Task_4/ICIO_rerun, Task_4/ReAct_rerun, and Task_4/SCOPE_rerun, and are analyzed separately in Task 4.
-There was one run per prompt in each configuration, so the results do not estimate run-to-run variability.
+I spent part of the available time finding and fixing the wrong output columns in all three prompts. I then ran an additional comparison using GPT luna with High reasoning and Chat / Instant mode. Those predictions and metadata are stored in Task_4/ICIO_rerun, Task_4/ReAct_rerun, and Task_4/SCOPE_rerun, and are analyzed separately in Task 4.
+I ran each prompt once with each model and settings, so I cannot tell how much the results would change if I repeated the runs.
 The remaining eight mismatches in the GPT-6.1 SOL Medium runs are examined in Tasks 3 and 4.

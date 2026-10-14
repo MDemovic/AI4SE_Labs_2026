@@ -20,7 +20,7 @@ For example, if the expected names are [A, B, C] and the predicted names are [A,
 - When both results are empty, precision, recall, and F1 are defined as 1. 
 - When only one is empty, they are defined as 0. A query that fails execution receives 0, even if its expected result is empty.
 
-The final score is macro F1: the average of the per-question F1 scores. Each question has equal weight, so questions returning many restaurants do not dominate the comparison.
+The final score is macro F1, meaning the average F1 across questions. Each question counts equally, even if it returns many restaurants.
 I also report exact-match name accuracy, along the F1
 
 
@@ -41,18 +41,18 @@ Output:
 
 --- Results ---
 These results use the corrected Task 2 runs, which return HOUSE_NUMBER and NAME.
-Before correcting the prompts, the original accuracy was 27.74% and name-based F1 was 98.49%. After requesting HOUSE_NUMBER and NAME with the required join, these increased to 94.84% and 98.51%. The large accuracy increase mainly reflects the corrected output columns. Name-based F1 changed only slightly because it ignores the numerical column, although the required join also changed some returned rows.
+Before correcting the prompts, the original accuracy was 27.74% and name-based F1 was 98.49%. After requesting HOUSE_NUMBER and NAME with the required join, these increased to 94.84% and 98.51%. The accuracy improved mainly because the queries now returned the correct columns. Name-based F1 changed only slightly because it ignores the numerical column, although the required join also changed some returned rows.
 Framework    Original accuracy    Name exact match    Macro name F1
 ICIO         94.84% (147/155)     94.84% (147/155)    98.51%
 ReAct        94.84% (147/155)     94.84% (147/155)    98.51%
 SCOPE        94.84% (147/155)     94.84% (147/155)    98.51%
 
 All three frameworks had the same scores because their returned result were identical for all 155 questions, even tho their SQL wordings were different. 
-For each framework, 8 questions did not match the complete expected name multiset. The higher F1 score shows that these mismatches often had substantial overlap rather than being completely wrong.
+For each framework, 8 questions did not match the complete expected name multiset. The higher F1 shows that many of these answers still returned most of the expected names.
 There are 43 questions with empty expected results, like we saw in the task before. I also calculated macro F1 over the 112 questions with nonempty expected results, which was 97.94% for all three frameworks.
-This metric complements the original accuracy; it does not replace it. The original metric checks complete returned rows containing HOUSE_NUMBER and NAME. Name-based F1 measures partial overlap in the returned names, but does not check whether house numbers are correct.
+I use this metric alongside the original accuracy, not instead of it. The original metric checks complete returned rows containing HOUSE_NUMBER and NAME. Name-based F1 measures partial overlap in the returned names, but does not check whether house numbers are correct.
 
-Different restaurants can share a name, so matching names does not prove that the correct restaurant identities were retrieved. In these runs, name-only exact accuracy equals the original accuracy, but F1 still shows partial overlap on questions that fail exact matching. The metric also ignores address fields and other output columns. 
+Different restaurants can share a name, so matching names alone does not prove that the right restaurants were returned. In these runs, name-only exact accuracy equals the original accuracy, but F1 still shows partial overlap on questions that fail exact matching. The metric also ignores address fields and other output columns. 
 Empty results can match even when the query selects inappropriate columns. Finally, it still relies on the expected names being correct.
 
 
@@ -64,5 +64,5 @@ ICIO         89.03% (138/155)     89.03% (138/155)    93.42%
 ReAct        94.84% (147/155)     94.84% (147/155)    98.51%
 SCOPE        89.03% (138/155)     89.03% (138/155)    92.84%
 
-ICIO and SCOPE have the same exact accuracy but different F1 scores. This illustrates the value of partial credit: failures can have different amounts of overlap with the expected names.
+ICIO and SCOPE have the same exact accuracy but different F1 scores. This shows why partial credit is useful: two incorrect answers can still return different amounts of the expected names.
 The additional runs and metric tables are stored in Task 4. Run Task_4/analyze_results.py from the repository root using its full path to reproduce both configurations. Its helper, analyze_additional_runs.py, reuses the name_metrics function from this task.
