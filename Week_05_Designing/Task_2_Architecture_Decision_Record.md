@@ -2,7 +2,7 @@
 
 **Status:** Architecture accepted; this revision awaits student review  
 **Date:** 2026-10-29  
-**Requirements:** [OneSport](../Tasks/data/OneSport.txt)  
+**Requirements:** [OneSport](Tasks/data/OneSport.txt)  
 **Discussion:** [Conversation record](Task_1_Discussion_Notes.md)
 
 ## Context and drivers
