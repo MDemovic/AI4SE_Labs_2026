@@ -1,0 +1,15 @@
+I prompted Codex to clone https://github.com/Neltharion59/AI4SE_Playground with prompt:
+
+"
+Hello, please follow the instructions inside the week6 assignment 1.
+Clone the repo, and create a also a small text file, whrere you mention what mechanisms you used to clone the repository.
+"
+
+- While the agent did this, I followed and checked for myself if he mentiones all of the mechanismsm that he used. 
+
+Report:
+Codex used its command-execution tool to run `git clone https://github.com/Neltharion59/AI4SE_Playground.git AI4SE_Playground` in the Task_1 directory.
+Git fetched the repository over HTTPS. The first attempt could not connect within the sandbox, so the command was retried with approved network access.
+Afterwards, Codex removed the cloned repository's .git directory so its files can be tracked by the surrounding repository without a nested Git repository.
+
+So he simply ran git clone https://github.com/Neltharion59/AI4SE_Playground.git inside of a terminal - HTTPS to protect and verify communication.
