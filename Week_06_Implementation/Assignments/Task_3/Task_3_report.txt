@@ -1,0 +1,7 @@
+﻿Task 3 report
+
+Since I am not that experienced with embeddings and retrieval, I asked Codex to explain the options and we experimented with different techniques and 
+chunking approaches, such as word and character TF-IDF, hashing, and splitting by functions.
+We kept the 80-line chunks and used word TF-IDF to turn only the code in each chunk into a numerical vector. 
+The index stores the vectors with their chunks and source information, and cosine similarity is used to find relevant chunks for a query. 
+This approach is simple, but it relies on matching words and can miss similar meanings expressed differently.
