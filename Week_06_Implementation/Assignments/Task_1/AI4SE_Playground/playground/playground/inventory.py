@@ -69,7 +69,12 @@ class InventoryLedger:
         self._on_hand[sku] = self._on_hand.get(sku, 0) - quantity
 
     def __contains__(self, sku: object) -> bool:
-        pass
+        if not isinstance(sku, str):
+            return False
+        sku = normalize_sku(sku)
+        if sku not in self._product_repo:
+            return False
+        return self._on_hand.get(sku, 0) > 0
 
     def __len__(self) -> int:
         """Return the number of SKUs with positive on-hand stock."""
@@ -148,7 +153,31 @@ class Warehouse(Entity):
         return self._ledger.add_stock(sku, quantity)
 
     def stock_report(self) -> Dict[str, int]:
-        pass
+        """Return a mapping of SKU to available quantity."""
+        report: Dict[str, int] = {}
+        repo = getattr(self._ledger, "_product_repo", None)
+        if repo is None:
+            return report
+        # Try to iterate the product repository and extract SKUs.
+        try:
+            for entry in repo:
+                if isinstance(entry, str):
+                    sku = entry
+                elif isinstance(entry, Entity):
+                    sku = entry.identity()
+                else:
+                    sku = getattr(entry, "sku", None)
+                    if sku is None:
+                        identity = getattr(entry, "identity", None)
+                        sku = identity() if callable(identity) else None
+                if sku is None:
+                    continue
+                report[normalize_sku(sku)] = self._ledger.available(sku)
+        except TypeError:
+            # Fallback: iterate known on-hand SKUs in the ledger.
+            for sku in list(getattr(self._ledger, "_on_hand", {}).keys()):
+                report[sku] = self._ledger.available(sku)
+        return report
 
     def __repr__(self) -> str:
         """Return a developer-friendly representation."""

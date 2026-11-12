@@ -1,0 +1,11 @@
+﻿Task 5 report
+
+I built the RAG pipeline with a help of an AI agent, GPT 6.1 Terra. It takes each task, retrieves five relevant chunks, and sends them with the task
+to gpt-5-mini. The returned method body is checked and written into the listed source file. The API key is stored in an ignored .env file.
+
+Before the missing methods were implemented, the repository's unit tests ran 481 tests with 35 failures and 17 errors. After running the pipeline
+for all ten methods, 481 tests ran with 2 failures and 1 error (478 passed).
+
+The remaining issues are in inventory: a malformed SKU raises an error in __contains__, the test expects membership to stay true after stock reaches
+zero even though the supplied task description says positive stock, and an empty warehouse report includes SKUs with zero quantity. These results
+are from the generated code without manually changing the methods after the run.
