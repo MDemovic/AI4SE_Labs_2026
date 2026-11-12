@@ -1,0 +1,8 @@
+﻿Task 4 report
+
+I again discussed with an agent how to compare the task with the stored chunks, and we tried cosine similarity and Euclidean distance on the same eight 
+sample queries. Both returned the same top three chunks for these queries. We kept cosine similarity because it compares the direction of the TF-IDF
+vectors and works with the normalized vectors from Task 3.
+
+The script converts a task to an embedding using the saved vocabulary, compares it with the stored embeddings, and returns up to the requested
+number of chunks with their scores. If the task contains no words from the vocabulary, it reports no matches.

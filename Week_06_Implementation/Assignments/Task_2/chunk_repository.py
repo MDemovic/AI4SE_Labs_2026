@@ -1,5 +1,4 @@
-﻿"""Split the Task 1 repository's Python files into overlapping line chunks."""
-import json
+﻿import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent

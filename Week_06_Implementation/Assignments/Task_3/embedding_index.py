@@ -1,5 +1,4 @@
-﻿"""Build and query a local TF-IDF index for the Task 2 chunks."""
-import argparse
+﻿import argparse
 import json
 from pathlib import Path
 
