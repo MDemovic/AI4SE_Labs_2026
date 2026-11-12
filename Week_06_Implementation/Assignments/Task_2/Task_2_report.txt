@@ -1,0 +1,60 @@
+﻿Task 2 report - proposed approach
+- I asked the agent to summarize for me the task, and propose a plan on how he would go about doing this task.
+
+--------------------------------------------------------------------------------------------------------
+Goal
+Split the Python source and test files in the repository cloned for Task 1 into chunks that can later be embedded and retrieved for coding tasks.
+This report describes a plan; the chunking script and output have not yet been created.
+
+Design decisions
+- Use line-based chunks of up to 80 lines, with 10 lines of overlap between consecutive chunks from the same file. 
+Lines keep code readable, while overlap helps preserve context around chunk boundaries. 
+This is an initial choice, not a proven optimum: it can split functions and does not guarantee a fixed token count. 
+An unusually long line can produce a large chunk.
+- Process .py files, including tests, because they contain the code and usage examples relevant to programming tasks. 
+Skip Git metadata, caches, and other generated files. Other file types could be added if they become useful.
+- Store the results as a JSON list. Each item should contain a relative file path, start and end line numbers, and the chunk text. 
+This makes the source easy to locate and provides a simple input for Task 3 embeddings.
+- Use Python's standard library and paths relative to the script, so the process is reproducible without installing extra 
+dependencies or relying on the current working directory. Sort paths for consistent output.
+
+Plan
+1. Create a Python script that finds the repository from the Task 2 folder and reads its Python files.
+2. Split each file into overlapping line windows, preserving its path and line numbers; handle empty files without producing empty chunks.
+3. Write the chunks to a JSON file in the Task 2 folder.
+4. Run the script and inspect the output: check boundaries, overlap, source coverage, and metadata. 
+
+Adjust the chunk size if the results suggest it is needed.
+--------------------------------------------------------------------------------------------------------
+
+Now I check in with him and question the design decisions.
+
+--------------------------------------------------------------------------------------------------------
+Experiment and final choice
+I asked Codex to compare fixed line windows and function-based chunks on the cloned repository. 
+The experiment used Python's AST to find function definitions, including methods and nested functions, and counted a function as complete when a single chunk contained all its lines, including decorators. 
+The function-based version made separate chunks for top-level functions and class methods, kept intervening lines in separate chunks, and split chunks longer than 80 lines with 10 lines of overlap. 
+It was run temporarily; only the selected implementation was saved.
+
+Method                 Complete functions    Chunks    Mean lines per chunk
+40 lines, 10 overlap        692 / 698           150            37.4
+80 lines, 10 overlap        696 / 698            70            68.8
+120 lines, 10 overlap       697 / 698            49            94.0
+Function-based              698 / 698          1361             3.2
+
+I kept the 80-line method as a compromise for this repository. 
+It keeps almost all detected functions complete while using fewer and larger chunks than the particular function-based method tested. 
+The 120-line option preserves one additional function but increases average chunk length by about 37%; 40 lines preserves fewer functions. 
+Function-based splitting preserved all functions, but produced many small chunks that can lack nearby class or file context. 
+A different function-based design that groups neighboring methods might work better.
+
+This is a small structural experiment, not a retrieval or model-quality benchmark. 
+It does not prove 80 lines is globally optimal; later retrieval tests could justify a different choice. 
+The final chunk_repository.py writes chunks.json with relative paths, one-based inclusive line numbers, and text. 
+A separate check confirmed that all lines of the 27 Python files were covered and that each chunk's text and bounds matched its source. 
+Empty files do not produce chunks.
+--------------------------------------------------------------------------------------------------------
+
+Design:
+I split the Python files from the cloned repository into chunks of 80 lines, with 10 lines overlapping so some context is kept between them. 
+I stored the chunks in a JSON file together with their file path and line numbers, so they can be easily found and used in the next task.
