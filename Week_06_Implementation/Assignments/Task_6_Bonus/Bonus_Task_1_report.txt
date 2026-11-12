@@ -1,0 +1,17 @@
+﻿Bonus Task 1 report
+
+I discussed a possible repository-aware code generation pipeline and its tradeoffs with the AI agent, using what we learned from the previous tasks. 
+The proposed pipeline would find the file and method to change, collect related code and tests, generate the change, and run the tests. 
+If tests fail, it could give the failures back to the model for a limited retry and report the result for review.
+
+For finding relevant code, we discussed combining keyword and symbol search with embeddings. Exact search can find names mentioned in the 
+task, while embeddings may find related code described in different words. Embeddings alone can also return similar-looking but irrelevant code.
+
+We also discussed splitting code around functions and classes, keeping file names and nearby context, and splitting large sections further. 
+This can keep related code together, but our small experiment showed that simple function chunks performed worse than 80-line chunks, so a more 
+sophisticated approach would need further testing.
+
+Instead of always using five chunks, the pipeline could choose the amount based on relevance and the available context. More chunks can provide 
+useful context but can also add unrelated code and increase the cost. Different numbers should be compared on representative tasks.
+
+The pipeline should also report disagreements between the task description and tests, such as the inventory membership case we found in Task 5.
