@@ -1,0 +1,7 @@
+Task 8 demonstration
+
+User: please finish all tasks. i will add commit push, and we will review tomorow i have to go to sleep
+
+Codex: The MCP server and sanitized configuration copies are in place. I've also added a narrowly scoped Task 8 rule: demonstration text files in that folder must start with "Task 8 demonstration." I'll create a small example that follows it.
+
+Codex then created example.txt with "Task 8 demonstration" as its first line. The rule is in the Task 8 AGENTS.md file, which applies to that folder. This record and the example both follow it.

@@ -1,0 +1,14 @@
+Task 3 - AGENTS.md
+
+In Codex CLI, I entered /init from the repository root to initiate the creation of AGENTS.md. 
+The init.png screenshot shows the command in the CLI.
+
+Codex created AGENTS.md in the repository root. It describes the repository structure, task-specific commands, coding and testing guidance, and how
+to explain significant choices when helping with assignments. Codex can use this file as persistent repository guidance for future tasks.
+
+The /init command can generate AGENTS.md from the repository context, but it is also possible to ask Codex in a normal prompt to create or refine the file. 
+I inspected the generated file with Codex; its repository structure and example command paths match the locations checked.
+
+Sources:
+https://developers.openai.com/cookbook/examples/codex/iterating-development-workflows-with-codex
+https://developers.openai.com/codex/guides/agents-md

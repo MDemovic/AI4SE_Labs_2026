@@ -1,0 +1,13 @@
+Task 6 - Subagent demonstration
+
+I asked my main Codex agent to start a subagent and give it a simple task. The exchange between the agents is recorded below.
+
+Main Codex agent: I'll run a small, bounded subagent demonstration and save an accurate text record of the request and returned result for Task 6.
+
+Main agent's instruction to subagent /root/assignment_review:
+For a simple Task 6 demonstration, read Week_08_Dissecting/Assignments/Task_5/Task_5.md and summarize its goal and required submission in two or three sentences. Read only; do not change files or spawn agents.
+
+Subagent's response:
+Task 5 asks the student to create a simple skill for their coding assistant, research the recommended skill structure, and place it where the assistant can use it within the repository. The submission is the properly positioned skill, or, if the assistant does not support skills, a short report explaining the limitation and alternatives.
+
+The main agent used one subagent for a read-only task and collected its response. No configuration change was needed in this session. The subagent instruction and response are reproduced as sent and received.

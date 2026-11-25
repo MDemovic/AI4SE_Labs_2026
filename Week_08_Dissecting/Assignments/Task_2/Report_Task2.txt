@@ -1,0 +1,17 @@
+Task 2 - Slash commands
+
+Again, I use OpenAI Codex as my coding assistant with a CLI version of 0.171.0. 
+Codex previously supported custom /prompts: commands, but an OpenAI maintainer says custom prompts were removed in CLI version 0.117.0. 
+The older custom-prompts documentation still describes the deprecated feature.
+
+The CLI documents /presets, which can save a reusable prompt in a numbered slot and run it through the /presets menu. This seems to me like the closest alternative. 
+I added a preset named explain-task to slot 1 in my Codex configuration; a copy is in preset-example.toml. 
+
+It asks Codex to explain an assignment and its expected output without completing it, making it a reusable shortcut 
+accessed using a built-in slash command, not a new named slash command. 
+
+Another alternative would be a skill, a reusable set of instructions stored in a SKILL.md file, but I will explore them in a later task.
+
+Sources:
+https://github.com/openai/codex/issues/15972
+https://learn.chatgpt.com/docs/developer-commands?surface=cli

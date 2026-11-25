@@ -1,0 +1,12 @@
+Task 7 - MCP tool test
+
+At the user's request, Codex created server.py and demo.py and ran:
+python Week_08_Dissecting/Assignments/Task_7/demo.py
+
+Output:
+Protocol: 2025-06-18
+Tool: word_count
+Input: Codex can count these words
+Result: 5
+
+The demo connects to the server over MCP stdio, lists the tool, and calls it once. This verifies the server through a separate MCP client. A native Codex MCP tool call remains to be demonstrated after registering the server and starting a new Codex session; see README.txt.

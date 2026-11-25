@@ -1,0 +1,12 @@
+Task 4 - Configuration profile
+
+Codex supports named configuration profiles as separate TOML files in the Codex home directory. 
+With Codex's help, I created a profile named study that selects gpt-6.1-terra, sets its reasoning effort to high, and asks it to explain important coursework 
+decisions and give concise examples. Other settings are inherited from my normal configuration unless overridden by a higher-priority setting.
+(To showcase the screenshot - I changed the reasoning setting to medium)
+
+I can edit the model, reasoning effort, and developer instructions in the installed study.config.toml, and start Codex with the profile using codex --profile
+study. A copy of the profile is included in this task folder.
+
+Source:
+https://developers.openai.com/codex/config-reference

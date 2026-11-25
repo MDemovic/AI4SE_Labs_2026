@@ -1,0 +1,22 @@
+Task 1 - System prompt
+
+I use OpenAI Codex as my coding assistant. I wanted to make a small change to its existing system prompt, but I could not find a simple setting 
+where I could view that prompt and change one line or variable while keeping the rest as it is.
+
+I inspected the local Codex configuration with the assistant. The user configuration file exists at ..\.codex\config.toml, but it does not 
+explicitly set model_instructions_file or developer_instructions. There is no project-level .codex/config.toml in this repository. 
+The CLI help did not show a direct editor for the existing system prompt.
+
+The Codex configuration reference documents model_instructions_file as a path to a replacement for the built-in instructions. 
+This is not quite the same as editing a small part of the existing prompt: I would need to provide a replacement file, and I have not 
+verified a supported way to obtain the complete existing instructions and preserve their behavior. Replacing them without knowing what they 
+contain could remove useful guidance.
+
+Codex offers alternatives for adding guidance. The developer_instructions setting adds developer instructions to a session, 
+and AGENTS.md provides repository-specific instructions. Neither is a small edit to the built-in system prompt itself. 
+
+I am submitting this short report instead of a screenshot of a system-prompt edit. I have not changed the built-in system prompt.
+
+Sources:
+https://developers.openai.com/codex/config-reference
+https://developers.openai.com/codex/guides/agents-md

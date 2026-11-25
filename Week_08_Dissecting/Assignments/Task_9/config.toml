@@ -1,0 +1,17 @@
+# Sanitized copy of relevant settings from ~/.codex/config.toml.
+model = "gpt-6.1-terra"
+model_reasoning_effort = "medium"
+service_tier = "default"
+
+[windows]
+sandbox = "elevated"
+
+[tui]
+screen_reader_detection_done = true
+
+[tui.presets.1]
+label = "explain-task"
+input = "Inspect the current assignment and explain its requirements, expected output, and a short plan. Do not complete it yet."
+
+[tui.model_availability_nux]
+"gpt-6.1-sol" = 4

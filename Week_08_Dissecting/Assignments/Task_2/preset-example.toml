@@ -1,0 +1,4 @@
+# Example Codex CLI preset for config.toml, or enter the prompt in /presets.
+[tui.presets.1]
+label = "explain-task"
+input = "Inspect the current assignment and explain its requirements, expected output, and a short plan. Do not complete it yet."

@@ -1,0 +1,3 @@
+model = "gpt-6.1-terra"
+model_reasoning_effort = "high"
+developer_instructions = "When helping with coursework, explain important decisions clearly and give concise examples."
