@@ -1,9 +1,9 @@
 Task 4 - Configuration profile
 
 Codex supports named configuration profiles as separate TOML files in the Codex home directory. 
-With Codex's help, I created a profile named study that selects gpt-6.1-terra, sets its reasoning effort to high, and asks it to explain important coursework 
+With Codex's help, I created a profile named study that selects gpt-6.1-terra, sets its reasoning effort to medium, and asks it to explain important coursework 
 decisions and give concise examples. Other settings are inherited from my normal configuration unless overridden by a higher-priority setting.
-The screenshot shows the reasoning setting being edited to medium. The saved profile currently uses high, so the screenshot does not show the current saved value.
+The screenshot shows the reasoning setting being changed from high to medium, which is the value now saved in the profile.
 
 I can edit the model, reasoning effort, and developer instructions in the installed study.config.toml, and start Codex with the profile using codex --profile
 study. A copy of the profile is included in this task folder.
