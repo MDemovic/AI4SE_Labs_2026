@@ -5,7 +5,6 @@ server.py is a minimal stdio MCP server written with the Python standard library
 From the repository root, run:
 python Week_08_Dissecting/Assignments/Task_7/demo.py
 
-To make it available to Codex CLI, register it using the full path to server.py:
-codex mcp add coursework -- python C:\AI-Soft\AI4SE_Labs_2026\Week_08_Dissecting\Assignments\Task_7\server.py
+The server is registered in the repository's .codex/config.toml. A copy of that configuration is in codex-mcp-config.toml. The absolute path must be adjusted if the repository is moved to another computer.
 
-Restart Codex and ask it to use the coursework word_count tool. The demonstration in demo.py calls the tool through MCP; it is a separate client rather than a recorded Codex MCP tool call.
+In a new Codex session started from the repository, ask it to use the coursework word_count tool and approve the tool call if prompted. Result_Task7.txt records a successful native Codex tool call as well as the separate demo.py test.

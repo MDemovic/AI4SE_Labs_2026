@@ -2,4 +2,4 @@ Task 9 - Codex configuration
 
 The accompanying config.toml is a sanitized copy of relevant settings from my Codex user configuration. It includes the explain-task preset from Task 2. Project trust entries were omitted because their paths identify local folders; no credentials are included. The separate study.config.toml is the installed profile from Task 4. Codex selects it with --profile study. The Task 4 report says the screenshot shows medium, while the installed profile currently uses high.
 
-AGENTS.md and the Task 5 skill are stored separately in the repository, not in these configuration files.
+The Task 7 MCP server is registered separately in the repository's .codex/config.toml, with a copy in Task 7. AGENTS.md and the Task 5 skill are also stored separately in the repository, not in the user configuration files.

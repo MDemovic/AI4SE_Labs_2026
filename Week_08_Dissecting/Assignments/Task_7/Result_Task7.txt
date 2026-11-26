@@ -9,4 +9,8 @@ Tool: word_count
 Input: Codex can count these words
 Result: 5
 
-The demo connects to the server over MCP stdio, lists the tool, and calls it once. This verifies the server through a separate MCP client. A native Codex MCP tool call remains to be demonstrated after registering the server and starting a new Codex session; see README.txt.
+The demo connects to the server over MCP stdio, lists the tool, and calls it once. This verifies the server through a separate MCP client.
+
+I also registered the server in the repository's .codex/config.toml and tested it in a fresh Codex CLI session. I asked Codex to use the coursework word_count tool on "Codex can count these words." The CLI's JSON event recorded a completed MCP tool call to coursework.word_count with that text as its argument; the tool returned "5", and Codex reported 5 words.
+
+The first noninteractive attempt could not run the tool because it required approval. For the successful retry, I used a command-line approval override limited to the coursework server for that session. The saved configuration was not changed to auto-approve tool calls.

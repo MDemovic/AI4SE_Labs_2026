@@ -1,0 +1,4 @@
+# Repository-local Codex MCP configuration. Use an absolute path on Windows.
+[mcp_servers.coursework]
+command = "python"
+args = ["C:/AI-Soft/AI4SE_Labs_2026/Week_08_Dissecting/Assignments/Task_7/server.py"]
